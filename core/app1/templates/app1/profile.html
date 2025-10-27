@@ -1,0 +1,167 @@
+{% extends 'app1/base.html' %}
+
+{% block title %}Profile - WhatsApp Clone{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="p-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Profile Settings</h2>
+            
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Profile Picture -->
+                <div class="text-center">
+                    <div class="relative inline-block">
+                        {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" class="w-24 h-24 rounded-full object-cover mx-auto">
+                        {% else %}
+                            <div class="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold text-2xl mx-auto">
+                                {{ user.username|first|upper }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mt-4">
+                        <label for="{{ form.profile_picture.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Profile Picture</label>
+                        <input id="{{ form.profile_picture.id_for_label }}" 
+                               name="{{ form.profile_picture.name }}" 
+                               type="file" 
+                               accept="image/*"
+                               class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+                        {% if form.profile_picture.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ form.profile_picture.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Personal Information -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                        <input id="{{ form.first_name.id_for_label }}" 
+                               name="{{ form.first_name.name }}" 
+                               type="text" 
+                               required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500" 
+                               placeholder="First Name"
+                               value="{{ form.first_name.value|default:user.first_name }}">
+                        {% if form.first_name.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ form.first_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                        <input id="{{ form.last_name.id_for_label }}" 
+                               name="{{ form.last_name.name }}" 
+                               type="text" 
+                               required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500" 
+                               placeholder="Last Name"
+                               value="{{ form.last_name.value|default:user.last_name }}">
+                        {% if form.last_name.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ form.last_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input id="{{ form.email.id_for_label }}" 
+                           name="{{ form.email.name }}" 
+                           type="email" 
+                           required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500" 
+                           placeholder="Email"
+                           value="{{ form.email.value|default:user.email }}">
+                    {% if form.email.errors %}
+                        <div class="text-red-500 text-sm mt-1">{{ form.email.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.phone_number.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                    <input id="{{ form.phone_number.id_for_label }}" 
+                           name="{{ form.phone_number.name }}" 
+                           type="tel" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500" 
+                           placeholder="Phone Number"
+                           value="{{ form.phone_number.value|default:user.phone_number }}">
+                    {% if form.phone_number.errors %}
+                        <div class="text-red-500 text-sm mt-1">{{ form.phone_number.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.bio.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+                    <textarea id="{{ form.bio.id_for_label }}" 
+                              name="{{ form.bio.name }}" 
+                              rows="3"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500" 
+                              placeholder="Tell us about yourself">{{ form.bio.value|default:user.bio }}</textarea>
+                    {% if form.bio.errors %}
+                        <div class="text-red-500 text-sm mt-1">{{ form.bio.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <!-- Account Information -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Account Information</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                            <input type="text" 
+                                   value="{{ user.username }}" 
+                                   disabled
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500">
+                            <p class="text-xs text-gray-500 mt-1">Username cannot be changed</p>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Member Since</label>
+                            <input type="text" 
+                                   value="{{ user.date_joined|date:'F j, Y' }}" 
+                                   disabled
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Last Login</label>
+                            <input type="text" 
+                                   value="{{ user.last_login|date:'F j, Y g:i A' }}" 
+                                   disabled
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 rounded-full {% if user.is_online %}bg-green-500{% else %}bg-gray-400{% endif %}"></div>
+                                <span class="text-sm text-gray-600">
+                                    {% if user.is_online %}Online{% else %}Offline{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                    <a href="{% url 'chat_list' %}" 
+                       class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md">
+                        Cancel
+                    </a>
+                    <button type="submit" 
+                            class="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md">
+                        Update Profile
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
