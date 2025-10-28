@@ -70,7 +70,7 @@
 
                 <!-- Online Users -->
                 {% if online_users %}
-                <div class="p-4 border-b border-gray-200">
+                <div class="p-2 border-b border-gray-200">
                     <h3 class="text-sm font-medium text-gray-500 mb-2">Online Users</h3>
                     <div class="flex space-x-2 overflow-x-auto">
                         {% for user in online_users %}
@@ -78,7 +78,7 @@
                             <a href="{% url 'create_chat' user.id %}" class="block">
                                 <div class="relative">
                                     {% if user.profile_picture %}
-                                        <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" class="w-10 h-10 rounded-full object-cover">
+                                        <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" class="w-6 h-6 rounded-full object-cover">
                                     {% else %}
                                         <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold">
                                             {{ user.username|first|upper }}
@@ -97,16 +97,16 @@
                 <!-- Chat List -->
                 <div class="chat-list-scrollable">
                     {% for room in chat_rooms %}
-                    <a href="{% url 'chat_room' room.id %}" class="block p-4 hover:bg-gray-100 border-b border-gray-200">
+                    <a href="{% url 'chat_room' room.id %}" class="block p-2 hover:bg-gray-100 border-b border-gray-200">
                         <div class="flex items-center space-x-3">
                             <div class="relative">
                                 {% if room.room_type == 'direct' %}
                                     {% for participant in room.participants.all %}
                                         {% if participant != user %}
                                             {% if participant.profile_picture %}
-                                                <img src="{{ participant.profile_picture.url }}" alt="{{ participant.username }}" class="w-12 h-12 rounded-full object-cover">
+                                                <img src="{{ participant.profile_picture.url }}" alt="{{ participant.username }}" class="w-10 h-10 rounded-full object-cover">
                                             {% else %}
-                                                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold text-lg">
+                                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold text-lg">
                                                     {{ participant.username|first|upper }}
                                                 </div>
                                             {% endif %}
@@ -179,7 +179,7 @@
                     <svg class="mx-auto h-24 w-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                     </svg>
-                    <h3 class="mt-4 text-lg font-medium text-gray-900">Welcome to WhatsApp Clone</h3>
+                    <h3 class="mt-4 text-lg font-medium text-gray-900">Welcome to Moon'sApp</h3>
                     <p class="mt-2 text-sm text-gray-500">Select a chat to start messaging</p>
                 </div>
             </div>

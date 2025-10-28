@@ -11,11 +11,11 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ('username', 'email', 'phone_number', 'first_name', 'last_name')
     ordering = ('-created_at',)
     
-    fieldsets = UserAdmin.fieldsets + (
+    fieldsets = list(UserAdmin.fieldsets) + [
         ('WhatsApp Profile', {
             'fields': ('phone_number', 'profile_picture', 'bio', 'is_online', 'last_seen')
         }),
-    )
+    ]
     
     add_fieldsets = UserAdmin.add_fieldsets + (
         ('WhatsApp Profile', {
