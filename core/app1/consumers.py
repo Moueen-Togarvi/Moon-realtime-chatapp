@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from .models import ChatRoom, Message, TypingIndicator, UserPresence, Notification
 from django.utils import timezone
 import uuid
+from django.conf import settings
 
 User = get_user_model()
 
@@ -214,6 +215,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 message_type=message_type,
                 reply_to=reply_to
             )
+            # Attach media if provided as a URL (from upload endpoint)
+            if media_file:
+                try:
+                    # Accept absolute or relative media URL
+                    media_url = str(media_file)
+                    if media_url.startswith('http'):
+                        # Strip domain and MEDIA_URL part
+                        idx = media_url.find(settings.MEDIA_URL)
+                        if idx != -1:
+                            relative_path = media_url[idx + len(settings.MEDIA_URL):]
+                        else:
+                            relative_path = media_url
+                    else:
+                        # If starts with MEDIA_URL remove it; otherwise assume it's a path under media root
+                        if media_url.startswith(settings.MEDIA_URL):
+                            relative_path = media_url[len(settings.MEDIA_URL):]
+                        else:
+                            relative_path = media_url.lstrip('/')
+                    # Assign storage-relative path to FileField
+                    message.media_file.name = relative_path
+                    message.save(update_fields=['media_file'])
+                except Exception as e:
+                    print(f"Failed to attach media to message: {e}")
+
             print(f"Message created successfully: {message.id}")
             return message
         except ChatRoom.DoesNotExist:

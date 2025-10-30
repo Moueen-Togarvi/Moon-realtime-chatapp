@@ -30,7 +30,7 @@
         overflow-y: scroll;
         overflow-x: hidden;
         min-height: 0;
-        max-height: calc(100vh - 180px);
+        max-height: calc( 95vh - 180px);
         scroll-behavior: smooth;
         padding-right: 10px;
     }
@@ -139,7 +139,7 @@
                     <div class="flex items-center justify-between">
                         <h2 class="text-xl font-semibold text-white">Chats</h2>
                         <div class="flex space-x-2">
-                            <a href="{% url 'create_group_chat' %}" class="p-2 text-white-600 hover:text-gray-400 hover:bg-gray-100 rounded-full">
+                            <a href="{% url 'create_group_chat' %}" class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                 </svg>
@@ -263,10 +263,10 @@
             <!-- Main Chat Area -->
             <div class="flex-1 flex flex-col main-chat-area">
                 <!-- Chat Header -->
-                <div class="p-4  bg-white/5 border-b border-white/10 mb-5px">
-                    <div class="flex items-center justify-between pb-7">
-                        <div class="flex items-center space-x-3 mb-5px">
-                        <div class="relative mb-5px">
+                <div class="p-4 bg-white/5 border-b border-white/10">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                        <div class="relative">
                             {% if room.room_type == 'direct' %}
                                 {% for participant in other_participants %}
                                     {% if participant.profile_picture %}
@@ -330,10 +330,10 @@
                 </div>
 
                 <!-- Messages Area -->
-                <div id="messages-container" class="flex-1 overflow-y-900 space-y-4 py-12 h-full bg-white/10 px-4">
+                <div id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-4 bg-white/5">
                     {% for message in messages %}
                     <div class="flex {% if message.sender == user %}justify-end{% else %}justify-start{% endif %}">
-                        <div class="message-bubble {% if message.sender == user %}bg-gradient-to-r from-white to-gray-700 text-black{% else %}bg-white/5 text-white{% endif %} rounded-lg p-3 shadow-sm">
+                        <div class="message-bubble {% if message.sender == user %}bg-white text-black{% else %}bg-white/5 text-white{% endif %} rounded-lg p-3 shadow-sm">
                             {% if message.reply_to %}
                             <div class="border-l-4 border-gray-300 pl-2 mb-2 text-sm opacity-75">
                                 <p class="font-medium">{{ message.reply_to.sender.username }}</p>
@@ -385,7 +385,7 @@
                 </div>
 
                 <!-- Message Input -->
-                <div class="message-input-container  p-4 bg-white/5 bottom-0 border-t border-white/10 py-9">
+                <div class="message-input-container p-4 bg-white/5 border-t border-white/10">
                     <form id="message-form" class="flex items-center space-x-2">
                         {% csrf_token %}
                         <input type="hidden" id="room-id" value="{{ room.id }}">

@@ -11,48 +11,56 @@
     <script defer src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        :root { color-scheme: dark; }
-        body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+        :root {
+          color-scheme: dark;
+          --bg-base:#0D1117;               /* keep dark canvas */
+          --accent-1:#ffffff;              /* white */
+          --accent-2:#9CA3AF;              /* gray-400 */
+          --text-weak:#D1D5DB;             /* gray-300 */
+          --link-hover:#E5E7EB;            /* gray-200 */
+          --neon:#ffffffcc;                /* white glow */
+        }
+        body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; background: var(--bg-base); }
         .animate-fadeIn { animation: fadeIn 700ms ease-out both; }
         .animate-slideUp { animation: slideUp 700ms ease-out both; }
         @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: translateY(0) } }
-        .glass { backdrop-filter: blur(16px); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); }
-        .nav-solid { background: rgba(13,17,23,0.85); border-bottom: 1px solid rgba(255,255,255,0.08); backdrop-filter: saturate(140%) blur(8px); }
-        canvas#bg-stars { position: fixed; inset: 0; z-index: -1; background: #0D1117; }
-        .neon-card { box-shadow: 0 0 30px rgba(255,255,255,.08), 0 0 50px rgba(255,255,255,.10); transition: box-shadow .35s ease, transform .35s ease; }
-        .neon-card:hover { box-shadow: 0 0 60px rgba(255,255,255,.18), 0 0 90px rgba(255,255,255,.18); transform: translateY(-2px); }
+        .glass { backdrop-filter: blur(16px); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.10); }
+        .nav-solid { background: rgba(17,24,39,0.85); border-bottom: 1px solid rgba(229,231,235,0.10); backdrop-filter: saturate(140%) blur(8px); }
+        canvas#bg-stars { position: fixed; inset: 0; z-index: -1; background: var(--bg-base); }
+        .neon-card { box-shadow: 0 0 30px rgba(255,255,255,.10), 0 0 50px rgba(255,255,255,.12); transition: box-shadow .35s ease, transform .35s ease; }
+        .neon-card:hover { box-shadow: 0 0 60px rgba(255,255,255,.20), 0 0 90px rgba(255,255,255,.18); transform: translateY(-2px); }
+        /* Light neutral blobs */
+        .bg-accents:before, .bg-accents:after { content:""; position:absolute; border-radius:9999px; filter:blur(48px); opacity:.15; }
+        .bg-accents:before { top:-6rem; left:-6rem; width:18rem; height:18rem; background:linear-gradient(135deg,#ffffff,#9ca3af); }
+        .bg-accents:after { bottom:-8rem; right:-8rem; width:22rem; height:22rem; background:linear-gradient(135deg,#e5e7eb,#9ca3af); }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
-<body class="bg-[#0D1117] text-[#F9FAFB] antialiased">
+<body class="text-[#F9FAFB] antialiased">
 
     <canvas id="bg-stars"></canvas>
-    <div class="pointer-events-none fixed inset-0 -z-10">
-        <div class="absolute -top-24 -left-24 h-80 w-80 bg-blue-500/20 blur-3xl rounded-full"></div>
-        <div class="absolute -bottom-24 -right-24 h-96 w-96 bg-purple-500/20 blur-3xl rounded-full"></div>
-    </div>
+    <div class="pointer-events-none fixed inset-0 -z-10 bg-accents"></div>
 
     <header id="nav" class="fixed top-0 inset-x-0 z-50 transition-all">
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
             <a href="{% url 'public_home' %}" class="flex items-center gap-2">
                 <span class="relative inline-flex h-6 w-6 items-center justify-center">
-                    <span class="absolute inline-flex h-full w-full rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 opacity-70 blur"></span>
-                    <span class="relative inline-flex h-6 w-6 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500"></span>
+                    <span class="absolute inline-flex h-full w-full rounded-full bg-gradient-to-tr from-white to-gray-300 opacity-70 blur"></span>
+                    <span class="relative inline-flex h-6 w-6 rounded-full bg-gradient-to-tr from-white to-gray-300"></span>
                 </span>
-                <span class="font-semibold tracking-tight">ChatSpace</span>
+                <span class="font-semibold tracking-tight text-white">ChatSpace</span>
             </a>
             <div class="hidden md:flex items-center gap-6 text-sm">
-                <a href="{% url 'public_home' %}" class="hover:text-blue-400 transition">Home</a>
-                <a href="{% url 'public_tools' %}" class="hover:text-blue-400 transition">Tools</a>
-                <a href="{% url 'public_features' %}" class="hover:text-blue-400 transition">Features</a>
-                <a href="{% url 'public_integrations' %}" class="hover:text-blue-400 transition">Integrations</a>
-                <a href="{% url 'public_use_cases' %}" class="hover:text-blue-400 transition">Use Cases</a>
-                <a href="{% url 'public_about' %}" class="hover:text-blue-400 transition">About</a>
-                <a href="{% url 'public_contact' %}" class="hover:text-blue-400 transition">Contact</a>
+                <a href="{% url 'public_home' %}" class="hover:text-gray-200 transition">Home</a>
+                <a href="{% url 'public_tools' %}" class="hover:text-gray-200 transition">Tools</a>
+                <a href="{% url 'public_features' %}" class="hover:text-gray-200 transition">Features</a>
+                <a href="{% url 'public_integrations' %}" class="hover:text-gray-200 transition">Integrations</a>
+                <a href="{% url 'public_about' %}" class="hover:text-gray-200 transition">About</a>
+                <a href="{% url 'public_contact' %}" class="hover:text-gray-200 transition">Contact</a>
             </div>
             <div>
-                <a href="{% url 'login' %}" class="border border-blue-500/30 px-4 py-2 rounded-lg hover:bg-blue-600/20 transition-all duration-300">Login</a>
+                <a href="{% url 'login' %}" class="border border-gray-400/40 px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all duration-300">Login</a>
             </div>
         </nav>
     </header>
@@ -62,8 +70,8 @@
     </main>
 
     <footer class="mt-24">
-        <div class="h-px w-full bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-sm flex flex-col md:flex-row items-center justify-between gap-4 border-t border-white/5">
+        <div class="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-sm flex flex-col md:flex-row items-center justify-between gap-4 border-t border-white/10">
             <p class="text-white/70">© 2025 ChatSpace. Built by Moueen.</p>
             <div class="flex items-center gap-6 text-white/70">
                 <a href="#" class="hover:text-white transition">Terms</a>
@@ -76,86 +84,32 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const nav = document.getElementById('nav');
-        function onScroll() {
-            if (window.scrollY > 8) nav.classList.add('nav-solid'); else nav.classList.remove('nav-solid');
-        }
-        onScroll();
-        window.addEventListener('scroll', onScroll);
+        function onScroll() { if (window.scrollY > 8) nav.classList.add('nav-solid'); else nav.classList.remove('nav-solid'); }
+        onScroll(); window.addEventListener('scroll', onScroll);
         if (window.lucide) lucide.createIcons();
-        const observer = new IntersectionObserver((entries)=>{
-            entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('animate-fadeIn'); observer.unobserve(e.target);} });
-        }, {threshold: 0.1});
+        const observer = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('animate-fadeIn'); observer.unobserve(e.target);} }); }, {threshold: 0.1});
         document.querySelectorAll('[data-animate]').forEach(el=>observer.observe(el));
 
-        // Simple stars background
-        const canvas = document.getElementById('bg-stars');
-        const ctx = canvas.getContext('2d');
-        let w, h;
-        let layers = [];
+        // Stars bg in grayscale tones
+        const canvas = document.getElementById('bg-stars'); const ctx = canvas.getContext('2d');
+        let w, h; let layers = [];
         function resize(){ w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; makeStars(); }
         function makeStars(){
-            // three parallax layers with different speeds and sizes
-            layers = [
-              {count: Math.min(40, Math.floor((w*h)/60000)), speed: 0.02, stars: []},
-              {count: Math.min(60, Math.floor((w*h)/45000)), speed: 0.04, stars: []},
-              {count: Math.min(80, Math.floor((w*h)/30000)), speed: 0.06, stars: []},
-            ];
-            layers.forEach(l=>{
-              l.stars = Array.from({length:l.count}, ()=>({
-                x: Math.random()*w,
-                y: Math.random()*h,
-                r: Math.random()*1.4 + 0.3,
-                a: Math.random()*Math.PI*2,
-                hue: 220 + Math.random()*40, // bluish-purple temps
-                drift: (Math.random()*0.6-0.3)
-              }));
-            });
+            layers = [ {count: Math.min(40, Math.floor((w*h)/60000)), speed: 0.02, stars: []}, {count: Math.min(60, Math.floor((w*h)/45000)), speed: 0.04, stars: []}, {count: Math.min(80, Math.floor((w*h)/30000)), speed: 0.06, stars: []}, ];
+            layers.forEach(l=>{ l.stars = Array.from({length:l.count}, ()=>({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1.4 + 0.3, a: Math.random()*Math.PI*2, hue: 0, drift: (Math.random()*0.6-0.3)})); });
         }
         let shooting = [];
-        function spawnShootingStar(){
-            // occasional shooting star that appears and fades
-            const y = Math.random()*h*0.7;
-            shooting.push({x: -50, y, vx: Math.random()*8+6, life: 1, curve: Math.random()*0.2+0.05});
-        }
+        function spawnShootingStar(){ const y = Math.random()*h*0.7; shooting.push({x: -50, y, vx: Math.random()*8+6, life: 1, curve: Math.random()*0.2+0.05}); }
         function draw(){
             ctx.clearRect(0,0,w,h);
-            // Slightly lighter center gradient to reduce black intensity
             const g = ctx.createRadialGradient(w*0.5,h*0.4,0,w*0.5,h*0.4,Math.max(w,h));
-            g.addColorStop(0,'#101826');
-            g.addColorStop(1,'#0D1117');
-            ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
-
-            layers.forEach(l=>{
-              l.stars.forEach(s=>{
-                s.a += l.speed; s.x += s.drift*l.speed; // subtle twinkle/drift
-                const alpha = (Math.sin(s.a)+1)/2*0.7 + 0.2;
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-                ctx.fillStyle = `hsla(${s.hue}, 80%, 88%, ${alpha})`;
-                ctx.fill();
-                if(s.x<0) s.x=w; if(s.x>w) s.x=0;
-              });
-            });
-            // draw shooting stars
-            shooting.forEach(s=>{
-                s.x += s.vx; s.y += s.curve*s.vx*0.1; s.life -= 0.01;
-                const grad = ctx.createLinearGradient(s.x-90, s.y-22, s.x, s.y);
-                grad.addColorStop(0, 'rgba(255,255,255,0)');
-                grad.addColorStop(1, `rgba(255,255,255,${Math.max(0,s.life)})`);
-                ctx.strokeStyle = grad;
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(s.x-90, s.y-22);
-                ctx.lineTo(s.x, s.y);
-                ctx.stroke();
-            });
+            g.addColorStop(0,'#0f141b'); g.addColorStop(1,'#0D1117'); ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+            layers.forEach(l=>{ l.stars.forEach(s=>{ s.a += l.speed; s.x += s.drift*l.speed; const alpha = (Math.sin(s.a)+1)/2*0.7 + 0.2; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fillStyle = `rgba(235,239,245,${alpha})`; ctx.fill(); if(s.x<0) s.x=w; if(s.x>w) s.x=0; }); });
+            shooting.forEach(s=>{ s.x += s.vx; s.y += s.curve*s.vx*0.1; s.life -= 0.01; const grad = ctx.createLinearGradient(s.x-90, s.y-22, s.x, s.y); grad.addColorStop(0, 'rgba(255,255,255,0)'); grad.addColorStop(1, `rgba(255,255,255,${Math.max(0,s.life)})`); ctx.strokeStyle = grad; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(s.x-90, s.y-22); ctx.lineTo(s.x, s.y); ctx.stroke(); });
             shooting = shooting.filter(s=> s.life>0 && s.x < w+100);
             requestAnimationFrame(draw);
         }
-        resize();
-        window.addEventListener('resize', resize);
-        requestAnimationFrame(draw);
-        setInterval(()=>{ if (Math.random()<0.35) spawnShootingStar(); }, 3800);
+        resize(); window.addEventListener('resize', resize); requestAnimationFrame(draw); setInterval(()=>{ if (Math.random()<0.35) spawnShootingStar(); }, 3800);
     });
     </script>
     {% block extra_js %}{% endblock %}
