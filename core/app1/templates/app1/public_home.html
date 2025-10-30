@@ -1,0 +1,364 @@
+
+{% extends 'app1/public_base.html' %}
+{% load static %}
+{% block title %}Realtime Chat, Reimagined | ChatSpace{% endblock %}
+
+{% block content %}
+<section id="home" class="relative overflow-hidden">
+  <div class="absolute inset-0 -z-10 blur-3xl top-0">
+    <div class="pointer-events-none select-none opacity-70">
+      <div class="absolute left-1/2 top-0 -translate-x-1/2 h-[520px] w-[1400px] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.18),rgba(0,0,0,0))]"></div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="text-center">
+      <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white">Fastest & Easiest Way to Generate Chats</h1>
+      <p class="mt-4 text-white/80 max-w-2xl mx-auto">Create secure, beautiful conversations for your team. Private by default, realtime delivery, modern UI.</p>
+      <div class="mt-6 flex items-center justify-center gap-3">
+        <a href="{% url 'login' %}" class="px-6 py-3 rounded-lg bg-gradient-to-r from-white to-gray-700 hover:from-white hover:to-gray-600 text-black transition-all">Get Started</a>
+        <a href="{% url 'public_features' %}" class="px-6 py-3 rounded-lg border border-white/10 hover:bg-white/5 transition-all">Explore</a>
+      </div>
+    </div>
+
+    <!-- Showcase row (left settings, center media, right actions) -->
+    <div class="mt-12 grid lg:grid-cols-3 gap-6">
+      <div class="glass neon-card rounded-2xl p-6">
+        <div class="text-white font-semibold">New Room</div>
+        <div class="mt-4 space-y-3">
+          <div>
+            <label class="text-xs text-white/70">Room name</label>
+            <input class="mt-1 w-full px-3 py-2 rounded-md bg-white/5 border border-white/10 text-white placeholder-white/60" placeholder="Design sync" />
+          </div>
+          <div>
+            <label class="text-xs text-white/70">Visibility</label>
+            <div class="mt-1 grid grid-cols-2 gap-2">
+              <button class="px-3 py-2 rounded-md bg-white/10 text-white border border-white/10">Private</button>
+              <button class="px-3 py-2 rounded-md bg-white/5 text-white/80 border border-white/10">Team</button>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs text-white/70">Add participants</label>
+            <div class="mt-1 flex gap-2">
+              <div class="w-8 h-8 rounded-full bg-white"></div>
+              <div class="w-8 h-8 rounded-full bg-gray-600"></div>
+              <div class="w-8 h-8 rounded-full bg-white/10"></div>
+            </div>
+          </div>
+          <button class="w-full mt-4 px-4 py-2 rounded-lg bg-gradient-to-r from-white to-gray-700 text-black">Create Room</button>
+        </div>
+      </div>
+
+      <div class="glass neon-card rounded-2xl p-3">
+        <div class="grid grid-cols-2 gap-3">
+          <figure class="rounded-xl overflow-hidden bg-white/5 aspect-video relative">
+            <img src="https://source.unsplash.com/800x450/?chat,app,dark" alt="Chat preview 1" class="w-full h-full object-cover opacity-90"/>
+            <figcaption class="absolute bottom-2 left-2 text-xs text-white/80 bg-black/30 rounded px-2 py-1">Direct chat</figcaption>
+          </figure>
+          <figure class="rounded-xl overflow-hidden bg-white/5 aspect-video relative">
+            <img src="https://source.unsplash.com/800x450/?team,discussion,neon" alt="Chat preview 2" class="w-full h-full object-cover opacity-90"/>
+            <figcaption class="absolute bottom-2 left-2 text-xs text-white/80 bg-black/30 rounded px-2 py-1">Group room</figcaption>
+          </figure>
+          <figure class="col-span-2 rounded-xl overflow-hidden bg-white/5 relative">
+            <div class="h-32 bg-gradient-to-r from-white/10 to-black/20 flex items-end p-4">
+              <div class="w-full h-2 rounded bg-gradient-to-r from-white to-gray-500"></div>
+            </div>
+            <figcaption class="absolute bottom-2 left-2 text-xs text-white/80 bg-black/30 rounded px-2 py-1">Realtime waveform • typing indicator</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="glass neon-card rounded-2xl p-6">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10">
+            <span class="text-white/90">Start direct chat</span>
+            <span class="w-2 h-2 rounded-full bg-white"></span>
+          </div>
+          <div class="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10">
+            <span class="text-white/90">Create group</span>
+            <span class="w-2 h-2 rounded-full bg-gray-400"></span>
+          </div>
+          <div class="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10">
+            <span class="text-white/90">Share media</span>
+            <span class="w-2 h-2 rounded-full bg-white"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Social proof / logos strip -->
+  <div class="mt-10 text-center">
+    <div class="text-white/60 text-xs">Trusted by teams</div>
+    <div class="mt-3 grid grid-cols-3 sm:grid-cols-6 gap-4 max-w-4xl mx-auto">
+      {% for _ in '123456' %}
+      <div class="h-6 rounded bg-white/5"></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="features" class="py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="glass rounded-2xl p-6 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)] hover:-translate-y-1 transition-all" data-animate>
+        <i data-lucide="lock" class="w-6 h-6 text-blue-400"></i>
+        <h3 class="mt-4 font-semibold text-white">Private by Default</h3>
+        <p class="mt-2 text-white/80 text-sm">Your conversations are protected. Privacy-first architecture across the stack.</p>
+      </div>
+      <div class="glass rounded-2xl p-6 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)] hover:-translate-y-1 transition-all" data-animate>
+        <i data-lucide="zap" class="w-6 h-6 text-blue-400"></i>
+        <h3 class="mt-4 font-semibold text-white">Realtime Messaging</h3>
+        <p class="mt-2 text-white/80 text-sm">Powered by WebSockets for instant delivery and typing indicators.</p>
+      </div>
+      <div class="glass rounded-2xl p-6 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)] hover:-translate-y-1 transition-all" data-animate>
+        <i data-lucide="message-circle" class="w-6 h-6 text-blue-400"></i>
+        <h3 class="mt-4 font-semibold text-white">Modern Design</h3>
+        <p class="mt-2 text-white/80 text-sm">Cursor-grade UI with glass surfaces, neon glows and fluid motion.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Secondary showcase band -->
+<section class="py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-8 items-center">
+    <div class="glass rounded-2xl p-6" data-animate>
+      <h3 class="text-2xl font-semibold text-white">Powerful editor for crafting conversations</h3>
+      <p class="mt-3 text-white/80">Compose, preview, and send messages with attachments in a blazing-fast, elegant interface.</p>
+      <div class="mt-6 h-56 rounded-xl bg-gradient-to-br from-blue-900/40 to-purple-900/40 flex items-end p-4">
+        <div class="w-full h-2 rounded bg-gradient-to-r from-blue-500 to-purple-500"></div>
+      </div>
+    </div>
+    <div class="grid gap-6" data-animate>
+      <div class="glass rounded-xl p-5">
+        <div class="flex items-center gap-3">
+          <i data-lucide="images" class="w-5 h-5 text-blue-400"></i>
+          <div class="text-white font-medium">Voice & Media Uploads</div>
+        </div>
+        <p class="text-white/70 text-sm mt-2">Share images, videos, and voice notes with real-time delivery.</p>
+      </div>
+      <div class="glass rounded-xl p-5">
+        <div class="flex items-center gap-3">
+          <i data-lucide="shield" class="w-5 h-5 text-blue-400"></i>
+          <div class="text-white font-medium">End-to-end Protection</div>
+        </div>
+        <p class="text-white/70 text-sm mt-2">Secure by design with robust transport and storage practices.</p>
+      </div>
+    </div>
+  </div>
+  </section>
+
+
+<!-- Visual Story: How it Works -->
+<section id="story" class="py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 items-center">
+    <!-- Left: animated canvas/graphic -->
+    <div class="relative" data-animate>
+      <div class="aspect-square w-full max-w-md mx-auto glass rounded-3xl overflow-hidden flex items-center justify-center">
+        <svg id="story-graphic" viewBox="0 0 200 200" class="w-3/4 h-3/4">
+          <defs>
+            <radialGradient id="orbGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0.4"/>
+            </radialGradient>
+          </defs>
+          <circle id="orb" cx="100" cy="100" r="38" fill="url(#orbGrad)"></circle>
+          <g id="sparkles" fill="white" opacity="0.8">
+            <circle cx="40" cy="40" r="1"/>
+            <circle cx="170" cy="70" r="1.5"/>
+            <circle cx="60" cy="160" r="1.2"/>
+          </g>
+          <path id="progress" d="M20 180 Q 100 20 180 180" stroke="#6EA8FF" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="0 600"></path>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Right: steps and text -->
+    <div class="space-y-6" id="story-steps">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/70 text-xs">How it works</div>
+      <h3 class="text-3xl font-bold text-white">From input to magic — in three simple steps</h3>
+      <div class="space-y-4">
+        <div class="step glass rounded-xl p-4 border border-white/10" data-step="1">
+          <div class="flex items-center gap-3">
+            <span class="w-6 h-6 rounded-full bg-blue-500 flex-shrink-0"></span>
+            <div>
+              <div class="text-white font-semibold">1. Upload Input</div>
+              <p class="text-white/70 text-sm">Drop images or text. We handle validation and optimized uploads.</p>
+            </div>
+          </div>
+        </div>
+        <div class="step glass rounded-xl p-4 border border-white/10" data-step="2">
+          <div class="flex items-center gap-3">
+            <span class="w-6 h-6 rounded-full bg-purple-500 flex-shrink-0"></span>
+            <div>
+              <div class="text-white font-semibold">2. AI Processes</div>
+              <p class="text-white/70 text-sm">Realtime engine routes your content through Channels and workers.</p>
+            </div>
+          </div>
+        </div>
+        <div class="step glass rounded-xl p-4 border border-white/10" data-step="3">
+          <div class="flex items-center gap-3">
+            <span class="w-6 h-6 rounded-full bg-blue-400 flex-shrink-0"></span>
+            <div>
+              <div class="text-white font-semibold">3. Magic Output</div>
+              <p class="text-white/70 text-sm">Instant delivery to your chat with previews, read receipts, and toasts.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About preview band -->
+<section id="about-preview" class="py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 items-center">
+    <div class="relative" data-animate>
+      <div class="h-80 w-full rounded-3xl bg-gradient-to-tr from-blue-500/40 to-purple-500/40 blur-2xl"></div>
+      <div class="absolute inset-6 rounded-3xl glass"></div>
+    </div>
+    <div data-animate>
+      <h3 class="text-3xl font-bold text-white">Built with Django + Channels + Tailwind</h3>
+      <p class="mt-3 text-white/80">ChatSpace is engineered for realtime performance and privacy. Modern glass UI, websocket delivery, media handling, and notifications — all tuned for developers.</p>
+      <div class="mt-6 flex gap-3">
+        <a href="{% url 'public_about' %}" class="px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600">About ChatSpace</a>
+        <a href="{% url 'public_integrations' %}" class="px-6 py-3 rounded-lg border border-white/10 hover:bg-white/5">Integrations</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Use Cases preview band -->
+<section id="use-cases-preview" class="py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-end justify-between">
+      <h3 class="text-3xl font-bold text-white">Where teams use ChatSpace</h3>
+      <a href="{% url 'public_use_cases' %}" class="text-blue-400 hover:text-blue-300">View all →</a>
+    </div>
+    <div class="mt-8 grid md:grid-cols-3 gap-6">
+      <div class="glass neon-card rounded-2xl p-6" data-animate>
+        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500"></div>
+        <h4 class="mt-4 text-white font-semibold">Customer Support</h4>
+        <p class="mt-2 text-white/70 text-sm">Faster resolution with realtime rooms and media.</p>
+      </div>
+      <div class="glass neon-card rounded-2xl p-6" data-animate>
+        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500"></div>
+        <h4 class="mt-4 text-white font-semibold">Team Standups</h4>
+        <p class="mt-2 text-white/70 text-sm">Daily syncs with presence and notifications.</p>
+      </div>
+      <div class="glass neon-card rounded-2xl p-6" data-animate>
+        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500"></div>
+        <h4 class="mt-4 text-white font-semibold">Community Channels</h4>
+        <p class="mt-2 text-white/70 text-sm">Open groups with moderation and media sharing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Big CTA band -->
+<section class="py-24">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h3 class="text-3xl sm:text-4xl font-extrabold text-white">Turn ideas into conversations in seconds.</h3>
+    <p class="mt-3 text-white/80">Start with a click. No onboarding friction.</p>
+    <div class="mt-6 flex items-center justify-center gap-4">
+      <a href="{% url 'login' %}" class="px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 transition-all">Get Started</a>
+      <a href="{% url 'public_features' %}" class="px-6 py-3 rounded-lg border border-white/10 hover:bg-white/5 transition-all">Browse Features</a>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 items-center">
+    <div class="relative" data-animate>
+      <div class="h-80 w-full rounded-3xl bg-gradient-to-tr from-blue-500/40 to-purple-500/40 blur-2xl"></div>
+      <div class="absolute inset-6 rounded-3xl glass"></div>
+    </div>
+    <div data-animate>
+      <h2 class="text-3xl font-bold text-white">Built with passion by Moueen</h2>
+      <p class="mt-3 text-white">Powered by Django, Channels, and Tailwind CSS. Inspired by the fluid experience of modern tools like Cursor.</p>
+      <div class="mt-6 grid sm:grid-cols-2 gap-4 text-sm">
+        <div class="glass rounded-xl p-4 text-white">Django + Channels</div>
+        <div class="glass rounded-xl p-4 text-white">Tailwind UI</div>
+        <div class="glass rounded-xl p-4 text-white">WebSocket realtime</div>
+        <div class="glass rounded-xl p-4 text-white">Premium UX details</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="py-24">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl font-bold text-white">Contact</h2>
+    <p class="mt-2 text-white">We’ll get back to you as soon as possible.</p>
+    <form class="mt-10 glass rounded-2xl p-6 space-y-4" id="landing-contact-form">
+      <div>
+        <label class="text-sm text-white">Name</label>
+        <input type="text" required class="mt-1 w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500/50">
+      </div>
+      <div>
+        <label class="text-sm text-white">Email</label>
+        <input type="email" required class="mt-1 w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500/50">
+      </div>
+      <div>
+        <label class="text-sm text-white">Message</label>
+        <textarea rows="5" required class="mt-1 w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500/50"></textarea>
+      </div>
+      <button type="submit" class="w-full px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 transition-all duration-300">Send Message</button>
+    </form>
+    <div id="landing-toast" class="hidden fixed top-6 right-6 glass rounded-lg px-4 py-3 text-sm">Message sent!</div>
+  </div>
+</section>
+
+{% block extra_js %}
+<script>
+document.getElementById('landing-contact-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  const t = document.getElementById('landing-toast');
+  t.classList.remove('hidden');
+  setTimeout(()=> t.classList.add('hidden'), 2500);
+});
+
+// Visual Story interactions (Framer Motion-like with Web Animations / IntersectionObserver)
+(function(){
+  const steps = Array.from(document.querySelectorAll('#story-steps .step'));
+  const progress = document.getElementById('progress');
+  const orb = document.getElementById('orb');
+  let active = 0;
+
+  function setActive(i){
+    active = i;
+    steps.forEach((el, idx)=>{
+      if(idx===i){ el.classList.add('ring-1','ring-blue-500/50'); el.style.transform='translateY(-2px)'; el.style.transition='transform 300ms'; }
+      else { el.classList.remove('ring-1','ring-blue-500/50'); el.style.transform='translateY(0)'; }
+    });
+    // Path reveal
+    const len = 520; // approximate path length
+    const dash = Math.min(len, (i+1)/steps.length * len);
+    progress.setAttribute('stroke-dasharray', `${dash} ${len}`);
+    // Orb pulse and move slightly
+    const targets = [{x:80,y:120},{x:100,y:90},{x:125,y:110}];
+    const p = targets[i];
+    orb.animate([
+      {transform:`translate(0,0) scale(1)`},
+      {transform:`translate(${p.x-100}px,${p.y-100}px) scale(1.06)`}
+    ], {duration:500, fill:'forwards', easing:'cubic-bezier(.2,.6,.2,1)'});
+  }
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){
+      // compute which step is centered in viewport
+      const rects = steps.map(s=> s.getBoundingClientRect());
+      const mid = window.innerHeight/2;
+      let idx = 0, best = 1e9;
+      rects.forEach((r,i)=>{ const d = Math.abs((r.top+r.bottom)/2 - mid); if(d<best){best=d; idx=i;} });
+      setActive(idx);
+    }});
+  }, {threshold: 0.2});
+  steps.forEach(s=> io.observe(s));
+})();
+</script>
+{% endblock %}
+{% endblock %}
+
+

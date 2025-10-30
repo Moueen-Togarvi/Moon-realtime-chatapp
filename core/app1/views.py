@@ -20,17 +20,46 @@ def home(request):
     """Home page - redirect to chat if authenticated, otherwise to login"""
     if request.user.is_authenticated:
         return redirect('chat_list')
-    return redirect('login')
+    return redirect('public_home')
+
+
+def public_home(request):
+    return render(request, 'app1/public_home.html')
+
+
+def public_features(request):
+    return render(request, 'app1/public_features.html')
+
+
+def public_about(request):
+    return render(request, 'app1/public_about.html')
+
+
+def public_contact(request):
+    return render(request, 'app1/public_contact.html')
+
+
+def public_tools(request):
+    return render(request, 'app1/public_tools.html')
+
+
+def public_integrations(request):
+    return render(request, 'app1/public_integrations.html')
+
+
+def public_use_cases(request):
+    return render(request, 'app1/public_use_cases.html')
 
 
 @login_required
 def chat_list(request):
     """Display list of chat rooms for the current user"""
-    # Get all chat rooms for the current user
+    # Strictly get only chat rooms where current user is a participant
+    # Using distinct() to avoid duplicates from many-to-many joins
     chat_rooms = ChatRoom.objects.filter(
-        participants=request.user,
+        participants__id=request.user.id,
         is_active=True
-    ).annotate(
+    ).distinct().annotate(
         last_message_time=Max('messages__timestamp'),
         unread_count=Count('messages', filter=Q(messages__is_read=False) & ~Q(messages__sender=request.user))
     ).order_by('-last_message_time', '-updated_at')
@@ -52,9 +81,18 @@ def chat_list(request):
 @login_required
 def chat_room(request, room_id):
     """Display specific chat room"""
-    room = get_object_or_404(ChatRoom, id=room_id, participants=request.user)
+    # Strict security check: ensure user is a participant before allowing access
+    room = get_object_or_404(
+        ChatRoom.objects.filter(participants__id=request.user.id, is_active=True).distinct(),
+        id=room_id
+    )
     
-    # Get messages for this room
+    # Double-check: Verify user is actually in participants (extra security layer)
+    if request.user not in room.participants.all():
+        messages.error(request, 'You do not have access to this chat room.')
+        return redirect('chat_list')
+    
+    # Get messages only from this room (already secured by room check)
     messages = Message.objects.filter(room=room).order_by('timestamp')
     
     # Mark messages as read
@@ -78,10 +116,24 @@ def chat_room(request, room_id):
     # Get other participants
     other_participants = room.participants.exclude(id=request.user.id)
 
+    # Sidebar needs the user's chat list and cycle users like on chat_list page
+    # Use same strict filtering as chat_list
+    chat_rooms = ChatRoom.objects.filter(
+        participants__id=request.user.id,
+        is_active=True
+    ).distinct().annotate(
+        last_message_time=Max('messages__timestamp'),
+        unread_count=Count('messages', filter=Q(messages__is_read=False) & ~Q(messages__sender=request.user))
+    ).order_by('-last_message_time', '-updated_at')
+
+    online_users = User.objects.filter(is_online=True).exclude(id=request.user.id)
+
     context = {
         'room': room,
         'messages': messages,
         'other_participants': other_participants,
+        'chat_rooms': chat_rooms,
+        'online_users': online_users,
     }
     return render(request, 'app1/chat_room.html', context)
 
@@ -91,11 +143,11 @@ def create_chat(request, user_id):
     """Create a new chat room with another user"""
     other_user = get_object_or_404(User, id=user_id)
     
-    # Check if a direct chat already exists
+    # Check if a direct chat already exists (strict filtering)
     existing_room = ChatRoom.objects.filter(
         room_type='direct',
-        participants=request.user
-    ).filter(participants=other_user).first()
+        participants__id=request.user.id
+    ).filter(participants__id=other_user.id).distinct().first()
     
     if existing_room:
         return redirect('chat_room', room_id=existing_room.id)
@@ -125,7 +177,10 @@ def create_group_chat(request):
             )
             room.participants.add(request.user)
             
+            # Ensure current user (admin) isn't re-added and skip invalid IDs
             for user_id in participant_ids:
+                if str(user_id) == str(request.user.id):
+                    continue
                 try:
                     user = User.objects.get(id=user_id)
                     room.participants.add(user)

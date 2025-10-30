@@ -1,0 +1,62 @@
+{% extends 'app1/public_base.html' %}
+{% block title %}Features | ChatSpace{% endblock %}
+{% block content %}
+<section class="py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl font-bold text-white">Features</h2>
+    <p class="mt-2 text-white">Everything you need for delightful, realtime conversations.</p>
+
+    <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="glass rounded-2xl p-6 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:-translate-y-1 transition-all" data-animate>
+        <i data-lucide="shield" class="w-6 h-6 text-white"></i>
+        <h3 class="mt-4 font-semibold text-white">End‑to‑End Encryption</h3>
+        <p class="mt-2 text-white text-sm">Secure message payloads with robust cryptographic practices.</p>
+      </div>
+      <div class="glass rounded-2xl p-6 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:-translate-y-1 transition-all" data-animate>
+        <i data-lucide="mic" class="w-6 h-6 text-white"></i>
+        <h3 class="mt-4 font-semibold text-white">Voice & Media Sharing</h3>
+        <p class="mt-2 text-white text-sm">Share images, videos and voice notes seamlessly.</p>
+      </div>
+      <div class="glass rounded-2xl p-6 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:-translate-y-1 transition-all" data-animate>
+        <i data-lucide="radio" class="w-6 h-6 text-white"></i>
+        <h3 class="mt-4 font-semibold text-white">WebSocket Realtime</h3>
+        <p class="mt-2 text-white text-sm">Instant delivery, typing and presence powered by Channels.</p>
+      </div>
+      <div class="glass rounded-2xl p-6 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:-translate-y-1 transition-all" data-animate>
+        <i data-lucide="palette" class="w-6 h-6 text-white"></i>
+        <h3 class="mt-4 font-semibold text-white">Custom Themes</h3>
+        <p class="mt-2 text-white text-sm">Personalize with dark mode and accent color options.</p>
+      </div>
+      <div class="glass rounded-2xl p-6 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:-translate-y-1 transition-all" data-animate>
+        <i data-lucide="bell" class="w-6 h-6 text-white"></i>
+        <h3 class="mt-4 font-semibold text-white">Smart Notifications</h3>
+        <p class="mt-2 text-white text-sm">Subtle toasts and inbox with read tracking.</p>
+      </div>
+      <div class="glass rounded-2xl p-6 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:-translate-y-1 transition-all" data-animate>
+        <i data-lucide="smartphone" class="w-6 h-6 text-white"></i>
+        <h3 class="mt-4 font-semibold text-white">Responsive UI</h3>
+        <p class="mt-2 text-white text-sm">Crystal-clear experience on desktop and mobile.</p>
+      </div>
+    </div>
+
+    <div class="mt-16 h-px w-full bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"></div>
+
+    <div class="mt-16 grid md:grid-cols-2 gap-8 items-center">
+      <div data-animate>
+        <h3 class="text-2xl font-semibold text-white">Performance built‑in</h3>
+        <p class="mt-3 text-white">Optimized rendering, native scrolling, and minimal layout shift for a silky experience.</p>
+      </div>
+      <div class="glass rounded-xl p-6" data-animate>
+        <div class="grid grid-cols-2 gap-4 text-sm">
+          <div class="rounded-lg bg-white/5 p-4 text-white">Zero latency UI</div>
+          <div class="rounded-lg bg-white/5 p-4 text-white">Smooth animations</div>
+          <div class="rounded-lg bg-white/5 p-4 text-white">Keyboard shortcuts</div>
+          <div class="rounded-lg bg-white/5 p-4 text-white">Accessible colors</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+

@@ -1,0 +1,39 @@
+{% extends 'app1/public_base.html' %}
+{% load static %}
+{% block title %}Use Cases | ChatSpace{% endblock %}
+{% block content %}
+<section class="py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h1 class="text-4xl font-extrabold text-white">Built for real-world teams</h1>
+      <p class="mt-3 text-white/80">A few ways ChatSpace fits your workflow.</p>
+    </div>
+
+    <div class="mt-12 grid md:grid-cols-3 gap-6">
+      <div class="glass rounded-2xl overflow-hidden neon-card" data-animate>
+        <img src="{% static 'images/ma.png' %}" alt="Support" class="w-full h-40 object-cover opacity-80">
+        <div class="p-6">
+          <h3 class="text-white font-semibold">Customer Support</h3>
+          <p class="mt-2 text-white/80 text-sm">Resolve tickets faster with realtime rooms, voice notes, and attachments.</p>
+        </div>
+      </div>
+      <div class="glass rounded-2xl overflow-hidden neon-card" data-animate>
+        <img src="{% static 'images/ma.png' %}" alt="Team" class="w-full h-40 object-cover opacity-80">
+        <div class="p-6">
+          <h3 class="text-white font-semibold">Team Standups</h3>
+          <p class="mt-2 text-white/80 text-sm">Daily syncs with thread replies, presence, and notifications.</p>
+        </div>
+      </div>
+      <div class="glass rounded-2xl overflow-hidden neon-card" data-animate>
+        <img src="{% static 'images/ma.png' %}" alt="Community" class="w-full h-40 object-cover opacity-80">
+        <div class="p-6">
+          <h3 class="text-white font-semibold">Community Channels</h3>
+          <p class="mt-2 text-white/80 text-sm">Open groups with media sharing and moderation controls.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+

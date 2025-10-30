@@ -2,7 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
-from .models import ChatRoom, Message, TypingIndicator, UserPresence
+from .models import ChatRoom, Message, TypingIndicator, UserPresence, Notification
 from django.utils import timezone
 import uuid
 
@@ -19,6 +19,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if not self.user.is_authenticated:
             print("User not authenticated, closing connection")
+            await self.close()
+            return
+
+        # Security check: Verify user is a participant in the room
+        is_participant = await self.check_user_is_participant()
+        if not is_participant:
+            print(f"User {self.user.username} is not a participant in room {self.room_id}, closing connection")
             await self.close()
             return
 
@@ -249,6 +256,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     print(f"Created notification for offline user: {participant.username}")
         except Exception as e:
             print(f"Error creating notifications: {e}")
+
+    @database_sync_to_async
+    def check_user_is_participant(self):
+        """Check if user is a participant in the room"""
+        try:
+            room = ChatRoom.objects.get(id=self.room_id, is_active=True)
+            return self.user in room.participants.all()
+        except ChatRoom.DoesNotExist:
+            return False
 
     @database_sync_to_async
     def update_user_presence(self, is_online):

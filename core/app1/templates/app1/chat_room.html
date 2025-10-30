@@ -130,16 +130,16 @@
 
 {% block content %}
 <div class="chat-container">
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden h-full">
+    <div class="rounded-lg overflow-hidden h-full glass">
         <div class="flex h-full" style="height: 100%;">
-            <!-- Sidebar -->
-            <div class="w-1/3 bg-gray-50 border-r border-gray-200 flex flex-col">
+            <!-- Sidebar: Chat List (kept visible like home page) -->
+            <div class="w-1/3 bg-white/5 border-r border-white/10 flex flex-col chats-sidebar">
                 <!-- Header -->
-                <div class="p-4 bg-white border-b border-gray-200">
+                <div class="p-4 bg-white/5 border-b border-white/10">
                     <div class="flex items-center justify-between">
-                        <h2 class="text-xl font-semibold text-gray-800">Participants</h2>
+                        <h2 class="text-xl font-semibold text-white">Chats</h2>
                         <div class="flex space-x-2">
-                            <a href="{% url 'create_group_chat' %}" class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full">
+                            <a href="{% url 'create_group_chat' %}" class="p-2 text-white-600 hover:text-gray-400 hover:bg-gray-100 rounded-full">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                 </svg>
@@ -149,61 +149,113 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
                             </a>
+
+                            
                         </div>
                     </div>
-                    <p class="text-sm text-gray-600 mt-1">{{ room.participants.count }} member{{ room.participants.count|pluralize }}</p>
                 </div>
 
-                <!-- Participants List -->
-                <div class="flex-1 overflow-y-auto participants-list">
-                    <a href="{% url 'chat_list' %}" class="block p-4 hover:bg-gray-100 border-b border-gray-200">
+                <!-- Online Users -->
+                {% if online_users %}
+                <div class="p-2 border-b border-gray-200">
+                    <h3 class="text-sm font-medium text-gray-500 mb-2">Online Users</h3>
+                    <div class="flex space-x-2 overflow-x-auto">
+                        {% for user in online_users %}
+                        <div class="flex-shrink-0">
+                            <a href="{% url 'create_chat' user.id %}" class="block">
+                                <div class="relative">
+                                    {% if user.profile_picture %}
+                                        <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" class="w-6 h-6 rounded-full object-cover">
+                                    {% else %}
+                                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold">
+                                            {{ user.username|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="online-indicator"></div>
+                                </div>
+                                <p class="text-xs text-center mt-1 text-gray-600">{{ user.username }}</p>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Chat List -->
+                <div class="flex-1 overflow-y-auto">
+                    {% for room in chat_rooms %}
+                    <a href="{% url 'chat_room' room.id %}" class="block p-2 hover:bg-white/10 border-b border-white/10">
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                                </svg>
+                            <div class="relative">
+                                {% if room.room_type == 'direct' %}
+                                    {% for participant in room.participants.all %}
+                                        {% if participant != user %}
+                                            {% if participant.profile_picture %}
+                                                <img src="{{ participant.profile_picture.url }}" alt="{{ participant.username }}" class="w-10 h-10 rounded-full object-cover">
+                                            {% else %}
+                                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold text-lg">
+                                                    {{ participant.username|first|upper }}
+                                                </div>
+                                            {% endif %}
+                                            {% if participant.is_online %}
+                                                <div class="online-indicator"></div>
+                                            {% else %}
+                                                <div class="offline-indicator"></div>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-lg">
+                                        {{ room.name|first|upper }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="flex-1">
-                                <h3 class="text-sm font-medium text-gray-900">Back to Chats</h3>
-                                <p class="text-xs text-gray-500">Return to chat list</p>
+                            
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-sm font-medium text-white truncate">
+                                        {% if room.room_type == 'direct' %}
+                                            {% for participant in room.participants.all %}
+                                                {% if participant != user %}{{ participant.username }}{% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            {{ room.name }}
+                                        {% endif %}
+                                    </h3>
+                                    {% if room.unread_count > 0 %}
+                                        <span class="bg-green-500 text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center">
+                                            {{ room.unread_count }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="flex items-center justify-between mt-1">
+                                    <p class="text-sm text-white/80 truncate">
+                                        {% if room.messages.last %}
+                                            {% if room.messages.last.sender == user %}
+                                                You: {{ room.messages.last.content|truncatechars:30 }}
+                                            {% else %}
+                                                {{ room.messages.last.content|truncatechars:30 }}
+                                            {% endif %}
+                                        {% else %}
+                                            No messages yet
+                                        {% endif %}
+                                    </p>
+                                    {% if room.messages.last %}
+                                        <p class="text-xs text-white/60">{{ room.messages.last.timestamp|timesince }} ago</p>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </a>
-
-                    <!-- Participants -->
-                    {% for participant in room.participants.all %}
-                        <div class="flex items-center p-4 hover:bg-gray-100 border-b border-gray-200">
-                            <div class="relative">
-                                {% if participant.profile_picture %}
-                                    <img src="{{ participant.profile_picture.url }}" alt="{{ participant.username }}" class="w-12 h-12 rounded-full object-cover">
-                                {% else %}
-                                    <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold text-lg">
-                                        {{ participant.username|first|upper }}
-                                    </div>
-                                {% endif %}
-                                <!-- Online Status Indicator -->
-                                {% if participant.is_online %}
-                                    <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
-                                {% else %}
-                                    <div class="absolute bottom-0 right-0 w-4 h-4 bg-gray-400 border-2 border-white rounded-full"></div>
-                                {% endif %}
-                            </div>
-                            <div class="ml-4 flex-1">
-                                <h3 class="font-medium text-gray-900">
-                                    {{ participant.username }}
-                                    {% if participant == user %}
-                                        <span class="text-blue-600 text-sm">(You)</span>
-                                    {% endif %}
-                                </h3>
-                                <p class="text-sm text-gray-500">
-                                    {% if participant.is_online %}
-                                        <span class="text-green-600">Online</span>
-                                    {% else %}
-                                        Last seen {{ participant.last_seen|timesince }} ago
-                                    {% endif %}
-                                </p>
-                            </div>
-                        </div>
+                    {% empty %}
+                    <div class="p-8 text-center text-gray-500">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">No chats yet</h3>
+                        <p class="mt-1 text-sm text-gray-500">Start a conversation with someone!</p>
+                    </div>
                     {% endfor %}
                 </div>
             </div>
@@ -211,10 +263,10 @@
             <!-- Main Chat Area -->
             <div class="flex-1 flex flex-col main-chat-area">
                 <!-- Chat Header -->
-                <div class="p-4 bg-white border-b border-gray-200">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                        <div class="relative">
+                <div class="p-4  bg-white/5 border-b border-white/10 mb-5px">
+                    <div class="flex items-center justify-between pb-7">
+                        <div class="flex items-center space-x-3 mb-5px">
+                        <div class="relative mb-5px">
                             {% if room.room_type == 'direct' %}
                                 {% for participant in other_participants %}
                                     {% if participant.profile_picture %}
@@ -238,14 +290,14 @@
                         </div>
                         
                         <div class="flex-1">
-                            <h3 class="text-lg font-semibold text-gray-900">
+                            <h3 class="text-lg font-semibold text-white">
                                 {% if room.room_type == 'direct' %}
                                     {% for participant in other_participants %}{{ participant.username }}{% endfor %}
                                 {% else %}
                                     {{ room.name }}
                                 {% endif %}
                             </h3>
-                            <p class="text-sm text-gray-500">
+                            <p class="text-sm text-white/80">
                                 {% if room.room_type == 'direct' %}
                                     {% for participant in other_participants %}
                                         {% if participant.is_online %}Online{% else %}Last seen {{ participant.last_seen|timesince }} ago{% endif %}
@@ -278,10 +330,10 @@
                 </div>
 
                 <!-- Messages Area -->
-                <div id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+                <div id="messages-container" class="flex-1 overflow-y-900 space-y-4 py-12 h-full bg-white/10 px-4">
                     {% for message in messages %}
                     <div class="flex {% if message.sender == user %}justify-end{% else %}justify-start{% endif %}">
-                        <div class="message-bubble {% if message.sender == user %}bg-green-500 text-white{% else %}bg-white text-gray-900{% endif %} rounded-lg p-3 shadow-sm">
+                        <div class="message-bubble {% if message.sender == user %}bg-gradient-to-r from-white to-gray-700 text-black{% else %}bg-white/5 text-white{% endif %} rounded-lg p-3 shadow-sm">
                             {% if message.reply_to %}
                             <div class="border-l-4 border-gray-300 pl-2 mb-2 text-sm opacity-75">
                                 <p class="font-medium">{{ message.reply_to.sender.username }}</p>
@@ -314,7 +366,7 @@
                         </div>
                     </div>
                     {% empty %}
-                    <div class="text-center text-gray-500 mt-8">
+                    <div class="text-center text-white/70 mt-8">
                         <p>No messages yet. Start the conversation!</p>
                     </div>
                     {% endfor %}
@@ -333,7 +385,7 @@
                 </div>
 
                 <!-- Message Input -->
-                <div class="message-input-container p-4 bg-white border-t border-gray-200">
+                <div class="message-input-container  p-4 bg-white/5 bottom-0 border-t border-white/10 py-9">
                     <form id="message-form" class="flex items-center space-x-2">
                         {% csrf_token %}
                         <input type="hidden" id="room-id" value="{{ room.id }}">
@@ -348,10 +400,10 @@
                         
                         <div class="flex-1 relative">
                             <input type="text" id="message-input" placeholder="Type a message..." 
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                   class="w-full px-4 py-2 border border-white/10 bg-white/5 text-white placeholder-white/60 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-400/50 focus:border-transparent">
                         </div>
                         
-                        <button type="submit" class="p-2 text-white bg-green-500 hover:bg-green-600 rounded-full">
+                        <button type="submit" class="p-2 text-black bg-gradient-to-r from-white to-gray-700 hover:from-white hover:to-gray-600 rounded-full">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                             </svg>
@@ -368,6 +420,7 @@
 
 <script>
 const roomId = document.getElementById('room-id').value;
+const currentUserId = '{{ user.id|stringformat:"s" }}';
 const messagesContainer = document.getElementById('messages-container');
 const messageForm = document.getElementById('message-form');
 const messageInput = document.getElementById('message-input');
@@ -404,6 +457,17 @@ function connectWebSocket() {
         
         if (data.type === 'chat_message') {
             addMessage(data.message);
+            // If the incoming message is from someone else, mark it as read
+            if (data.message && data.message.sender && data.message.sender.id !== currentUserId) {
+                try {
+                    chatSocket.send(JSON.stringify({
+                        'type': 'message_read',
+                        'message_id': data.message.id
+                    }));
+                } catch (err) {
+                    console.error('Failed to send read receipt:', err);
+                }
+            }
         } else if (data.type === 'typing_indicator') {
             handleTypingIndicator(data);
         } else if (data.type === 'user_status') {
@@ -441,9 +505,9 @@ connectWebSocket();
 // Message handling
 function addMessage(message) {
     const messageDiv = document.createElement('div');
-    messageDiv.className = `flex ${message.sender.id === '{{ user.id }}' ? 'justify-end' : 'justify-start'}`;
+    messageDiv.className = `flex ${message.sender.id === currentUserId ? 'justify-end' : 'justify-start'}`;
     
-    const bubbleClass = message.sender.id === '{{ user.id }}' ? 
+    const bubbleClass = message.sender.id === currentUserId ? 
         'bg-green-500 text-white' : 'bg-white text-gray-900';
     
     let content = '';
@@ -460,7 +524,7 @@ function addMessage(message) {
             ${content}
             <div class="flex items-center justify-between mt-1 text-xs opacity-75">
                 <span>${new Date(message.timestamp).toLocaleTimeString()}</span>
-                ${message.sender.id === '{{ user.id }}' ? 
+                ${message.sender.id === currentUserId ? 
                     `<span>${message.is_read ? '✓✓' : '✓'}</span>` : ''}
             </div>
         </div>
