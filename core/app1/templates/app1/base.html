@@ -53,11 +53,33 @@
 
     <canvas id="app-stars" class="fixed inset-0 -z-10"></canvas>
 
+    <!-- Global top navbar -->
+    <header id="app-nav" class="fixed top-0 inset-x-0 z-40 nav-solid transition-all">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+        <a href="{% url 'public_home' %}" class="flex items-center gap-2">
+          <span class="relative inline-flex h-6 w-6 items-center justify-center">
+            <span class="absolute inline-flex h-full w-full rounded-full bg-gradient-to-tr from-white to-gray-300 opacity-70 blur"></span>
+            <span class="relative inline-flex h-6 w-6 rounded-full bg-gradient-to-tr from-white to-gray-300"></span>
+          </span>
+          <span class="font-semibold tracking-tight">ChatSpace</span>
+        </a>
+        <div class="hidden md:flex items-center gap-6 text-sm">
+          <a href="{% url 'chat_list' %}" class="hover:text-gray-200 transition">Chat</a>
+          <a href="{% url 'public_features' %}" class="hover:text-gray-200 transition">Features</a>
+          <a href="{% url 'public_integrations' %}" class="hover:text-gray-200 transition">Integrations</a>
+        </div>
+        <div>
+          {% if user.is_authenticated %}
+          <a href="{% url 'logout' %}" class="border border-gray-400/40 px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all">Logout</a>
+          {% else %}
+          <a href="{% url 'login' %}" class="border border-gray-400/40 px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all">Login</a>
+          {% endif %}
+        </div>
+      </nav>
+    </header>
+
     <!-- Header / Title bar -->
-<div class="bg-[#0D1117] text-white flex items-center gap-2 border-b border-white/10">
-  <img src="{% static 'images/ma.png' %}" alt="App Icon" class="w-8 h-8 ml-10 rounded-full" />
-  <span class="  font-medium">Moon'sApp</span>
-</div>
+<!-- Removed brand bar to keep chat header clean -->
 
 
     <!-- Sidebar Navigation -->
@@ -129,7 +151,7 @@
     {% endif %} -->
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto ">
+    <main class="max-w-7xl mx-auto pt-14">
         {% block content %}{% endblock %}
     </main>
 

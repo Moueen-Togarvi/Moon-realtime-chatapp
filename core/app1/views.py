@@ -5,15 +5,22 @@ from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from django.db.models import Q, Count, Max
+from django.db.models import Q, Count, Max, Case, When, IntegerField
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.conf import settings
+import logging
 import json
 import uuid
+from urllib import request as urlrequest
+from urllib.error import HTTPError, URLError
 from .models import User, ChatRoom, Message, Notification, UserPresence
 from .forms import UserRegistrationForm, UserLoginForm, ProfileUpdateForm
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+ 
 
 
 def home(request):
@@ -51,27 +58,75 @@ def public_use_cases(request):
     return render(request, 'app1/public_use_cases.html')
 
 
+def public_ai(request):
+    return render(request, 'app1/public_ai.html')
+
+
 @login_required
 def chat_list(request):
     """Display list of chat rooms for the current user"""
-    # Strictly get only chat rooms where current user is a participant
-    # Using distinct() to avoid duplicates from many-to-many joins
+    # Ensure the user has a chat room with the AI assistant
+    try:
+        ai_user, _ = User.objects.get_or_create(
+            username='AI_Assistant',
+            defaults={
+                'first_name': 'AI',
+                'last_name': 'Assistant',
+                'is_active': True,
+                'email': 'ai@example.com'
+            }
+        )
+        
+        # Check if a direct chat already exists between user and AI
+        existing_ai_room = ChatRoom.objects.filter(
+            room_type='direct',
+            participants__id=request.user.id
+        ).filter(participants__id=ai_user.id).distinct().first()
+        
+        if not existing_ai_room:
+            # Create a direct chat room between the user and AI assistant
+            ai_room = ChatRoom.objects.create(
+                room_type='direct',
+                created_by=ai_user
+            )
+            ai_room.participants.add(request.user, ai_user)
+    except Exception as e:
+        # Log the error but continue
+        print(f"Error ensuring AI chat room: {e}")
+    
     chat_rooms = ChatRoom.objects.filter(
         participants__id=request.user.id,
         is_active=True
     ).distinct().annotate(
         last_message_time=Max('messages__timestamp'),
-        unread_count=Count('messages', filter=Q(messages__is_read=False) & ~Q(messages__sender=request.user))
+        unread_count=Count('messages', filter=Q(messages__is_read=False) & ~Q(messages__sender=request.user)),
     ).order_by('-last_message_time', '-updated_at')
+    
+    # Add is_ai_room attribute to each room
+    ai_user = User.objects.get(username='AI_Assistant')
+    for room in chat_rooms:
+        room.is_ai_room = False
+        if room.room_type == 'direct' and room.participants.count() == 2:
+            participant_usernames = [p.username for p in room.participants.all()]
+            if 'AI_Assistant' in participant_usernames:
+                room.is_ai_room = True
 
-    # Get online users for creating new chats
     online_users = User.objects.filter(is_online=True).exclude(id=request.user.id)
 
-    # Get unread notifications count
     unread_notifications = Notification.objects.filter(user=request.user, is_read=False).count()
 
+    # Get the AI room separately to avoid duplicates
+    ai_room = None
+    regular_rooms = []
+    for room in chat_rooms:
+        if room.is_ai_room and ai_room is None:
+            ai_room = room
+        elif not room.is_ai_room:
+            regular_rooms.append(room)
+    
     context = {
-        'chat_rooms': chat_rooms,
+        'chat_rooms': regular_rooms,
+        'ai_room': ai_room,
         'online_users': online_users,
         'unread_notifications': unread_notifications,
     }
@@ -81,59 +136,75 @@ def chat_list(request):
 @login_required
 def chat_room(request, room_id):
     """Display specific chat room"""
-    # Strict security check: ensure user is a participant before allowing access
     room = get_object_or_404(
         ChatRoom.objects.filter(participants__id=request.user.id, is_active=True).distinct(),
         id=room_id
     )
-    
-    # Double-check: Verify user is actually in participants (extra security layer)
     if request.user not in room.participants.all():
         messages.error(request, 'You do not have access to this chat room.')
         return redirect('chat_list')
-    
-    # Get messages only from this room (already secured by room check)
-    messages = Message.objects.filter(room=room).order_by('timestamp')
-    
-    # Mark messages as read
+
+    messages_qs = Message.objects.filter(room=room).order_by('timestamp')
+
     unread_messages = Message.objects.filter(
         room=room,
         is_read=False
     ).exclude(sender=request.user)
-    
     for message in unread_messages:
         message.read_by.add(request.user)
         message.is_read = True
         message.save()
 
-    # Mark notifications as read for this room
     Notification.objects.filter(
         user=request.user, 
         related_room=room, 
         is_read=False
     ).update(is_read=True)
 
-    # Get other participants
     other_participants = room.participants.exclude(id=request.user.id)
 
-    # Sidebar needs the user's chat list and cycle users like on chat_list page
-    # Use same strict filtering as chat_list
+    # Check if current room is an AI room
+    is_ai_room = False
+    try:
+        ai_user = User.objects.get(username='AI_Assistant')
+        if room.room_type == 'direct' and room.participants.count() == 2:
+            participant_usernames = [p.username for p in room.participants.all()]
+            if 'AI_Assistant' in participant_usernames:
+                is_ai_room = True
+    except User.DoesNotExist:
+        # AI user doesn't exist yet
+        pass
+
     chat_rooms = ChatRoom.objects.filter(
         participants__id=request.user.id,
         is_active=True
     ).distinct().annotate(
         last_message_time=Max('messages__timestamp'),
-        unread_count=Count('messages', filter=Q(messages__is_read=False) & ~Q(messages__sender=request.user))
+        unread_count=Count('messages', filter=Q(messages__is_read=False) & ~Q(messages__sender=request.user)),
     ).order_by('-last_message_time', '-updated_at')
+    
+    # Add is_ai_room attribute to each room
+    try:
+        ai_user = User.objects.get(username='AI_Assistant')
+        for room in chat_rooms:
+            room.is_ai_room = False
+            if room.room_type == 'direct' and room.participants.count() == 2:
+                participant_usernames = [p.username for p in room.participants.all()]
+                if 'AI_Assistant' in participant_usernames:
+                    room.is_ai_room = True
+    except User.DoesNotExist:
+        # AI user doesn't exist yet, so no rooms are AI rooms
+        pass
 
     online_users = User.objects.filter(is_online=True).exclude(id=request.user.id)
 
     context = {
         'room': room,
-        'messages': messages,
+        'messages': messages_qs,
         'other_participants': other_participants,
         'chat_rooms': chat_rooms,
         'online_users': online_users,
+        'is_ai_room': is_ai_room,
     }
     return render(request, 'app1/chat_room.html', context)
 
@@ -201,6 +272,31 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
+            
+            # Create a default chat room with the AI assistant
+            try:
+                # Get or create the AI assistant user
+                ai_user, _ = User.objects.get_or_create(
+                    username='AI_Assistant',
+                    defaults={
+                        'first_name': 'AI',
+                        'last_name': 'Assistant',
+                        'is_active': True,
+                        'email': 'ai@example.com'
+                    }
+                )
+                
+                # Create a direct chat room between the new user and AI assistant
+                ai_room = ChatRoom.objects.create(
+                    room_type='direct',
+                    created_by=ai_user
+                )
+                ai_room.participants.add(user, ai_user)
+                
+            except Exception as e:
+                # Log the error but don't fail registration
+                print(f"Error creating AI chat room: {e}")
+            
             messages.success(request, 'Account created successfully!')
             return redirect('chat_list')
     else:
@@ -336,3 +432,174 @@ def search_users(request):
 def websocket_test(request):
     """Test WebSocket connectivity"""
     return render(request, 'app1/websocket_test.html')
+
+
+@require_http_methods(["POST"])
+@csrf_exempt
+def ai_reply(request):
+    """Simple AI reply endpoint backing public AI page and hooks.
+    Accepts JSON {"prompt": str} or form-data with field 'text'. Returns {"reply": str}.
+    """
+    try:
+        # Extract prompt from JSON or form-data
+        prompt = None
+        if request.content_type and 'application/json' in request.content_type:
+            try:
+                body = json.loads(request.body.decode('utf-8')) if request.body else {}
+            except json.JSONDecodeError:
+                body = {}
+            prompt = (body.get('prompt') or '').strip()
+        if not prompt:
+            prompt = (request.POST.get('text') or '').strip()
+
+        if not prompt:
+            return JsonResponse({'error': 'Missing prompt'}, status=400)
+
+        # Use Gemini via google-generativeai if configured
+        api_key = getattr(settings, 'GEMINI_API_KEY', None)
+        model_name = getattr(settings, 'GEMINI_MODEL', None) or 'gemini-flash-latest'
+
+        reply_text = None
+        if api_key:
+            try:
+                import google.generativeai as genai
+                genai.configure(api_key=api_key)
+                
+                # Updated model candidates with working model names
+                model_candidates = []
+                seen = set()
+                for name in [model_name, 'gemini-flash-latest', 'gemini-2.0-flash', 'gemini-pro-latest']:
+                    if name and name not in seen:
+                        model_candidates.append(name)
+                        seen.add(name)
+
+                last_err = None
+                for candidate in model_candidates:
+                    try:
+                        model = genai.GenerativeModel(candidate)
+                        result = model.generate_content(prompt)
+                        # Robust extraction
+                        text_candidate = None
+                        try:
+                            text_candidate = getattr(result, 'text', None)
+                        except Exception:
+                            text_candidate = None
+                        if not text_candidate:
+                            try:
+                                if hasattr(result, 'candidates') and result.candidates:
+                                    for c in result.candidates:
+                                        content_obj = getattr(c, 'content', None)
+                                        parts = getattr(content_obj, 'parts', []) if content_obj else []
+                                        for p in parts:
+                                            t = getattr(p, 'text', None) or (str(p) if p is not None else None)
+                                            if t and t.strip():
+                                                text_candidate = t
+                                                break
+                                        if text_candidate:
+                                            break
+                            except Exception:
+                                pass
+                        reply_text = (text_candidate or '').strip() or None
+                        if reply_text:
+                            break
+                    except Exception as e:
+                        last_err = e
+                        continue
+
+                if not reply_text and last_err is not None:
+                    logging.exception("Gemini provider error while generating content")
+                    if getattr(settings, 'DEBUG', False):
+                        reply_text = f"AI provider error: {str(last_err)[:180]}"
+                    else:
+                        reply_text = "AI provider error. Please try again later."
+            except Exception as e:
+                logging.exception("Gemini initialization error")
+                if getattr(settings, 'DEBUG', False):
+                    reply_text = f"AI init error: {str(e)[:180]}"
+                else:
+                    reply_text = "AI initialization error."
+
+        if not reply_text:
+            # Graceful fallback if no provider configured
+            reply_text = "AI is not configured. Set GEMINI_API_KEY in .env."
+
+        # If room_id provided, post AI reply into that room and broadcast
+        room_id = None
+        if request.content_type and 'application/json' in request.content_type:
+            try:
+                body = json.loads(request.body.decode('utf-8')) if request.body else {}
+            except json.JSONDecodeError:
+                body = {}
+            room_id = body.get('room_id') or body.get('room')
+        if not room_id:
+            room_id = request.POST.get('room_id')
+
+        if room_id:
+            try:
+                # Validate user context and room membership when posting into a room
+                if not request.user.is_authenticated:
+                    return JsonResponse({'reply': reply_text})
+
+                room = ChatRoom.objects.get(id=room_id)
+                if not room.participants.filter(id=request.user.id).exists():
+                    return JsonResponse({'reply': reply_text})
+
+                # Get or create a system AI user
+                ai_user, _ = User.objects.get_or_create(
+                    username='AI_Assistant',
+                    defaults={
+                        'first_name': 'AI',
+                        'last_name': 'Assistant',
+                        'is_active': True,
+                    }
+                )
+
+                # Add AI user as participant to the room if not already added
+                if not room.participants.filter(id=ai_user.id).exists():
+                    room.participants.add(ai_user)
+
+                # Create message
+                ai_message = Message.objects.create(
+                    sender=ai_user,
+                    room=room,
+                    content=reply_text,
+                    message_type='text'
+                )
+
+                # Serialize minimal shape expected by frontend addMessage()
+                serialized = {
+                    'id': str(ai_message.id),
+                    'sender': {
+                        'id': str(ai_user.id),
+                        'username': ai_user.username,
+                        'profile_picture': ai_user.profile_picture.url if getattr(ai_user, 'profile_picture', None) else None
+                    },
+                    'content': ai_message.content,
+                    'message_type': ai_message.message_type,
+                    'media_file': ai_message.media_file.url if ai_message.media_file else None,
+                    'timestamp': ai_message.timestamp.isoformat(),
+                    'is_read': ai_message.is_read,
+                    'reply_to': str(ai_message.reply_to.id) if ai_message.reply_to else None,
+                }
+
+                # Broadcast to room via Channels
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    f'chat_{room.id}',
+                    {
+                        'type': 'chat_message',
+                        'message': serialized,
+                    }
+                )
+            except Exception:
+                # Don't fail the API response if room broadcast has issues
+                pass
+
+        return JsonResponse({'reply': reply_text})
+    except Exception as e:
+        return JsonResponse({'error': 'Server error', 'details': str(e)[:200]}, status=500)
+
+
+
+
+ 

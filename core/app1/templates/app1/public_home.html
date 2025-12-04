@@ -1,3 +1,4 @@
+
 {% extends 'app1/public_base.html' %}
 {% load static %}
 {% block title %}Realtime Chat, Reimagined | ChatSpace{% endblock %}
@@ -13,25 +14,25 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="text-center">
       <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white">Fastest & Easiest Way to Generate Chats</h1>
-      <p class="mt-16 text-white/80 max-w-2xl mx-auto">Create secure, beautiful conversations for your team. Private by default, realtime delivery, modern UI.</p>
-      <div class="mt-12 flex items-center justify-center gap-3">
-        <a href="{% url 'login' %}" class="px-6 py-3 rounded-lg bg-white hover:from-white hover:to-gray-600 text-black transition-all">Get Started</a>
+      <p class="mt-4 text-white/80 max-w-2xl mx-auto">Create secure, beautiful conversations for your team. Private by default, realtime delivery, modern UI.</p>
+      <div class="mt-6 flex items-center justify-center gap-3">
+        <a href="{% url 'login' %}" class="px-6 py-3 rounded-lg bg-gradient-to-r from-white to-gray-700 hover:from-white hover:to-gray-600 text-black transition-all">Get Started</a>
         <a href="{% url 'public_features' %}" class="px-6 py-3 rounded-lg border border-white/10 hover:bg-white/5 transition-all">Explore</a>
       </div>
     </div>
 
     <!-- Showcase row (two glassy, neon cards centered and spaced) -->
-    <div class="flex flex-col items-center justify-center min-h-[540px]  py-24 ">
-      <div class="flex flex-col md:flex-row gap-2 justify-center items-center  md:items-stretch w-full">
-        <div class="glass -top-24 ml-10 h-80 neon-card hero-card rounded-2xl shadow-[0_0_32px_8px_rgba(255,255,255,0.10),_0_2px_18px_2px_rgba(107,177,255,0.10)] mb-3 md:mb-0 w-full md:w-[28rem] self-stretch transition-all duration-700 hover:shadow-[0_0_44px_0_rgba(21,127,255,0.21)] border border-white/20 animate-fade-in">
+    <div class="flex flex-col items-center justify-center min-h-[540px] py-12 ">
+      <div class="flex flex-col md:flex-row gap-6 justify-center items-center md:items-stretch w-full">
+        <div class="glass neon-card hero-card rounded-2xl shadow-[0_0_32px_8px_rgba(255,255,255,0.10),_0_2px_18px_2px_rgba(107,177,255,0.10)] mb-3 md:mb-0 w-full md:w-[28rem] self-stretch transition-all duration-700 hover:shadow-[0_0_44px_0_rgba(21,127,255,0.21)] border border-white/20 animate-fade-in">
           <div class="p-8 h-full flex flex-col">
             <div class="font-semibold text-white text-xl mb-2">New Room</div>
             <div class="space-y-5 flex-1 flex flex-col">
           <div>
                 <label class="block text-xs text-white/70 mb-1">Room name</label>
                 <div class="relative">
-                  <input id="demo-room-name" class="w-full px-3 py-2 rounded-md bg-white/10 border border-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-blue-500/30 transition-all pr-10" placeholder="Enter Room Name" autocomplete="on" />
-                  <span id="demo-caret" class="absolute right-3 top-1/2 -translate-y-1/2 select-none text-blue-300 text-xl opacity-80">Moueen Dev|</span>
+                  <input id="demo-room-name" class="w-full px-3 py-2 rounded-md bg-white/10 border border-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-blue-500/30 transition-all pr-10" placeholder="Design Sync" autocomplete="off" />
+                  <span id="demo-caret" class="absolute right-3 top-1/2 -translate-y-1/2 select-none text-blue-300 text-xl opacity-80">|</span>
             </div>
           </div>
           <div>
@@ -51,7 +52,6 @@
             </div>
           </div>
         </div>
-
         <div class="glass neon-card hero-card rounded-2xl shadow-[0_0_32px_8px_rgba(255,255,255,0.10),_0_2px_18px_2px_rgba(107,177,255,0.10)] w-full md:w-[28rem] self-stretch mx-auto transition-all duration-700 hover:shadow-[0_0_44px_0_rgba(21,127,255,0.21)] border border-white/20 animate-fade-in flex flex-col">
           <div class="p-6 md:p-8 h-full flex flex-col">
             <div class="flex items-start gap-3 mb-3">
@@ -90,17 +90,17 @@
 
               <div class="relative rounded-xl overflow-hidden bg-white/10 h-full min-h-[180px] p-4 grid grid-rows-3 gap-3">
                 <div class="grid grid-cols-3 gap-3 text-center">
-                  <div class="glass rounded-lg px-6 py-3 flex flex-col items-center justify-center h-full">
-                    <div class="text-[6px] p-4 text-white/70 uppercase tracking-wide leading-none">Throughput</div>
-                    <div id="kpi1" class="mt-1 text-white font-bold text-sm tabular-nums leading-none whitespace-nowrap">92%</div>
+                  <div class="glass rounded-lg py-2">
+                    <div class="text-[10px] text-white/70">Throughput</div>
+                    <div id="kpi1" class="text-white font-bold">92%</div>
                   </div>
-                  <div class="glass rounded-lg px-6 py-3 flex flex-col items-center justify-center h-full">
-                    <div class="text-[6px] p-4 text-white/70 uppercase tracking-wide leading-none">Stability</div>
-                    <div id="kpi2" class="mt-1 text-white font-bold text-sm tabular-nums leading-none whitespace-nowrap">99%</div>
+                  <div class="glass rounded-lg py-2">
+                    <div class="text-[10px] text-white/70">Stability</div>
+                    <div id="kpi2" class="text-white font-bold">99%</div>
                   </div>
-                  <div class="glass rounded-lg px-6 py-3 flex flex-col items-center justify-center h-full">
-                    <div class="text-[6px] p-4  text-white/70 uppercase tracking-wide leading-none">Latency</div>
-                    <div id="kpi3" class="mt-1 text-white text-[2px] font-bold text-sm  tabular-nums leading-none whitespace-nowrap">120</div>
+                  <div class="glass rounded-lg py-2">
+                    <div class="text-[10px] text-white/70">Latency</div>
+                    <div id="kpi3" class="text-white font-bold">120ms</div>
                   </div>
                 </div>
                 <div class="flex items-center justify-between text-xs text-white/80">
@@ -154,15 +154,13 @@
     <div class="text-white/60 text-xs">Trusted by teams</div>
     <div class="mt-3 grid grid-cols-3 sm:grid-cols-6 gap-4 max-w-4xl mx-auto">
       {% for _ in '123456' %}
-      <div class="h-6 rounded bg-white/5"> 
-        <!-- <p class=" pl-2 mb-2">Logo</p> -->
-      </div>
+      <div class="h-6 rounded bg-white/5"></div>
       {% endfor %}
     </div>
   </div>
 </section>
 
-<section id="features" class="py-24">
+<section id="features" class="py-12">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="grid md:grid-cols-3 gap-6">
       <div class="shadow-[0_0_32px_8px_rgba(255,255,255,0.10),_0_2px_18px_2px_rgba(107,177,255,0.10)] glass neon-card rounded-2xl p-6 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)] hover:-translate-y-1 transition-all" data-animate>
@@ -185,14 +183,14 @@
 </section>
 
 <!-- Secondary showcase band -->
-<section class="py-24">
+<section class="py-12">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-8 items-center">
     <div class="glass rounded-2xl p-6" data-animate>
       <h3 class="text-2xl font-semibold text-white">Powerful editor for crafting conversations</h3>
       <p class="mt-3 text-white/80">Compose, preview, and send messages with attachments in a blazing-fast, elegant interface.</p>
-      <!-- <div class="mt-6 h-56 rounded-xl bg-gradient-to-br from-white-300 to-grey-900 flex items-end p-4">
-        <!-- <div class="w-full h-2 rounded bg-gradient-to-r from-white-300 to-grey-900"></div> -->
-      <!-- </div>  -->
+      <div class="mt-6 h-56 rounded-xl bg-gradient-to-br from-white-300 to-grey-900 flex items-end p-4">
+        <div class="w-full h-2 rounded bg-gradient-to-r from-white-300 to-grey-900"></div>
+      </div>
     </div>
     <div class="grid gap-6" data-animate>
       <div class="glass rounded-xl p-5">
@@ -214,15 +212,27 @@
   </section>
 
 
-
-
 <!-- Visual Story: How it Works -->
-<section id="story" class="py-24">
+<section id="story" class="py-12">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 items-center">
     <!-- Left: animated canvas/graphic -->
     <div class="relative" data-animate>
       <div class="aspect-square w-full max-w-md mx-auto glass rounded-3xl overflow-hidden flex items-center justify-center">
-        <img class=' ' src="data:image/jpeg;base64,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" alt="amc">>
+        <svg id="story-graphic" viewBox="0 0 200 200" class="w-3/4 h-3/4">
+          <defs>
+            <radialGradient id="orbGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0.4"/>
+            </radialGradient>
+          </defs>
+          <circle id="orb" cx="100" cy="100" r="38" fill="url(#orbGrad)"></circle>
+          <g id="sparkles" fill="white" opacity="0.8">
+            <circle cx="40" cy="40" r="1"/>
+            <circle cx="170" cy="70" r="1.5"/>
+            <circle cx="60" cy="160" r="1.2"/>
+          </g>
+          <path id="progress" d="M20 180 Q 100 20 180 180" stroke="#6EA8FF" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="0 600"></path>
+        </svg>
       </div>
     </div>
 
@@ -235,7 +245,7 @@
           <div class="flex items-center gap-3">
             <span class="w-6 h-6 rounded-full bg-blue-500 flex-shrink-0"></span>
             <div>
-              <div class="text-white font-semibold">1. Send Message</div>
+              <div class="text-white font-semibold">1. Upload Input</div>
               <p class="text-white/70 text-sm">Drop images or text. We handle validation and optimized uploads.</p>
             </div>
           </div>
@@ -244,7 +254,7 @@
           <div class="flex items-center gap-3">
             <span class="w-6 h-6 rounded-full bg-purple-500 flex-shrink-0"></span>
             <div>
-              <div class="text-white font-semibold">2. Receive Message</div>
+              <div class="text-white font-semibold">2. AI Processes</div>
               <p class="text-white/70 text-sm">Realtime engine routes your content through Channels and workers.</p>
             </div>
           </div>
@@ -263,12 +273,26 @@
   </div>
 </section>
 
-  {% include 'app1/public_features.html' %}
-
-</section> 
+<!-- About preview band -->
+<!-- <section id="about-preview" class="py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 items-center">
+    <div class="relative" data-animate>
+      <div class="h-80 w-full rounded-3xl bg-gradient-to-tr from-blue-500/40 to-purple-500/40 blur-2xl"></div>
+      <div class="absolute inset-6 rounded-3xl glass"></div>
+    </div>
+    <div data-animate>
+      <h3 class="text-3xl font-bold text-white">Built with Django + Channels + Tailwind</h3>
+      <p class="mt-3 text-white/80">ChatSpace is engineered for realtime performance and privacy. Modern glass UI, websocket delivery, media handling, and notifications — all tuned for developers.</p>
+      <div class="mt-6 flex gap-3">
+        <a href="{% url 'public_about' %}" class="px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600">About ChatSpace</a>
+        <a href="{% url 'public_integrations' %}" class="px-6 py-3 rounded-lg border border-white/10 hover:bg-white/5">Integrations</a>
+      </div>
+    </div>
+  </div>
+</section> -->
 
 <!-- Use Cases preview band -->
-<section id="use-cases-preview" class="py-24">
+<section id="use-cases-preview" class="py-12">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-end justify-between">
       <h3 class="text-3xl font-bold text-white">Where teams use ChatSpace</h3>
@@ -305,7 +329,7 @@
     </div>
   </div>
 </section>
-<!-- 
+
 <section id="about" class="py-24">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 items-center">
     <div class="relative" data-animate>
@@ -323,7 +347,7 @@
       </div>
     </div>
   </div>
-</section> -->
+</section>
 
 <section id="contact" class="py-24">
   <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">

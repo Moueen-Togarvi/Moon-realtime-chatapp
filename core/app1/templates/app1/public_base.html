@@ -24,7 +24,8 @@
         .animate-fadeIn { animation: fadeIn 700ms ease-out both; }
         .animate-slideUp { animation: slideUp 700ms ease-out both; }
         @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: translateY(0) } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: translateY(0) }
+        }
         .glass { backdrop-filter: blur(16px); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.10); }
         .nav-solid { background: rgba(17,24,39,0.85); border-bottom: 1px solid rgba(229,231,235,0.10); backdrop-filter: saturate(140%) blur(8px); }
         canvas#bg-stars { position: fixed; inset: 0; z-index: -1; background: var(--bg-base); }
@@ -44,7 +45,7 @@
 
     <header id="nav" class="fixed top-0 inset-x-0 z-50 transition-all">
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-            <a href="{% url 'public_home' %}" class="flex items-center gap-2">
+            <a href="{% url 'home' %}" class="flex items-center gap-2">
                 <span class="relative inline-flex h-6 w-6 items-center justify-center">
                     <span class="absolute inline-flex h-full w-full rounded-full bg-gradient-to-tr from-white to-gray-300 opacity-70 blur"></span>
                     <span class="relative inline-flex h-6 w-6 rounded-full bg-gradient-to-tr from-white to-gray-300"></span>
@@ -52,15 +53,21 @@
                 <span class="font-semibold tracking-tight text-white">ChatSpace</span>
             </a>
             <div class="hidden md:flex items-center gap-6 text-sm">
-                <a href="{% url 'public_home' %}" class="hover:text-gray-200 transition">Home</a>
+                <a href="{% url 'home' %}" class="hover:text-gray-200 transition">Home</a>
+                <a href="{% url 'public_ai' %}" class="hover:text-gray-200 transition">AI Assistant</a>
                 <a href="{% url 'public_tools' %}" class="hover:text-gray-200 transition">Tools</a>
                 <a href="{% url 'public_features' %}" class="hover:text-gray-200 transition">Features</a>
                 <a href="{% url 'public_integrations' %}" class="hover:text-gray-200 transition">Integrations</a>
+                <a href="{% url 'public_use_cases' %}" class="hover:text-gray-200 transition">Use Cases</a>
                 <a href="{% url 'public_about' %}" class="hover:text-gray-200 transition">About</a>
                 <a href="{% url 'public_contact' %}" class="hover:text-gray-200 transition">Contact</a>
             </div>
             <div>
+                {% if user.is_authenticated %}
+                <a href="{% url 'chat_list' %}" class="border border-gray-400/40 px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all duration-300">Go to Chat</a>
+                {% else %}
                 <a href="{% url 'login' %}" class="border border-gray-400/40 px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all duration-300">Login</a>
+                {% endif %}
             </div>
         </nav>
     </header>
@@ -115,5 +122,3 @@
     {% block extra_js %}{% endblock %}
 </body>
 </html>
-
-

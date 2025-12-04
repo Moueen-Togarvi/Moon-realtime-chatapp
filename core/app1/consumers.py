@@ -4,8 +4,11 @@ from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from .models import ChatRoom, Message, TypingIndicator, UserPresence, Notification
 from django.utils import timezone
-import uuid
 from django.conf import settings
+import uuid
+ 
+
+ 
 
 User = get_user_model()
 
@@ -107,43 +110,28 @@ class ChatConsumer(AsyncWebsocketConsumer):
             print("No content or media file provided")
             return
 
-        # Save message to database (always save, even if user is offline)
+        # Save the user's message
         message = await self.save_message(content, message_type, media_file, reply_to_id)
-        
         if not message:
             print("Failed to save message")
             return
 
         print(f"Message saved with ID: {message.id}")
 
-        # Create message data for broadcasting
-        message_data = {
-            'id': str(message.id),
-            'sender': {
-                'id': str(message.sender.id),
-                'username': message.sender.username,
-                'profile_picture': message.sender.profile_picture.url if message.sender.profile_picture else None
-            },
-            'content': message.content,
-            'message_type': message.message_type,
-            'media_file': message.media_file.url if message.media_file else None,
-            'timestamp': message.timestamp.isoformat(),
-            'is_read': message.is_read,
-            'reply_to': str(message.reply_to.id) if message.reply_to else None
-        }
-
-        # Send message to room group (for online users)
+        # Broadcast user's message
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'chat_message',
-                'message': message_data
+                'message': await self.serialize_message(message)
             }
         )
         print("Message broadcasted to room group")
 
         # Create notifications for offline users
         await self.create_notifications_for_offline_users(message)
+
+        # AI features removed
 
     async def handle_typing(self, data):
         await self.channel_layer.group_send(
@@ -174,6 +162,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # WebSocket event handlers
     async def chat_message(self, event):
         message = event['message']
+        print(f"Broadcasting message to client: sender={message.get('sender', {}).get('username', 'Unknown')}, content={message.get('content', '')[:50]}")
         await self.send(text_data=json.dumps({
             'type': 'chat_message',
             'message': message
@@ -194,6 +183,25 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'username': event['username'],
             'is_online': event['is_online']
         }))
+
+    # AI removed
+
+    @database_sync_to_async
+    def serialize_message(self, message):
+        return {
+            'id': str(message.id),
+            'sender': {
+                'id': str(message.sender.id),
+                'username': message.sender.username,
+                'profile_picture': message.sender.profile_picture.url if getattr(message.sender, 'profile_picture', None) else None
+            },
+            'content': message.content,
+            'message_type': message.message_type,
+            'media_file': message.media_file.url if message.media_file else None,
+            'timestamp': message.timestamp.isoformat(),
+            'is_read': message.is_read,
+            'reply_to': str(message.reply_to.id) if message.reply_to else None
+        }
 
     # Database operations
     @database_sync_to_async
@@ -218,22 +226,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
             # Attach media if provided as a URL (from upload endpoint)
             if media_file:
                 try:
-                    # Accept absolute or relative media URL
                     media_url = str(media_file)
                     if media_url.startswith('http'):
-                        # Strip domain and MEDIA_URL part
                         idx = media_url.find(settings.MEDIA_URL)
                         if idx != -1:
                             relative_path = media_url[idx + len(settings.MEDIA_URL):]
                         else:
                             relative_path = media_url
                     else:
-                        # If starts with MEDIA_URL remove it; otherwise assume it's a path under media root
                         if media_url.startswith(settings.MEDIA_URL):
                             relative_path = media_url[len(settings.MEDIA_URL):]
                         else:
                             relative_path = media_url.lstrip('/')
-                    # Assign storage-relative path to FileField
                     message.media_file.name = relative_path
                     message.save(update_fields=['media_file'])
                 except Exception as e:
@@ -263,13 +267,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def create_notifications_for_offline_users(self, message):
         """Create notifications for offline users in the chat room"""
         try:
-            # Get all participants in the room except the sender
             participants = message.room.participants.exclude(id=message.sender.id)
-            
             for participant in participants:
-                # Check if user is offline
                 if not participant.is_online:
-                    # Create notification
                     Notification.objects.create(
                         user=participant,
                         notification_type='message',
@@ -298,10 +298,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         presence.last_seen = timezone.now()
         presence.save()
 
-        # Update user model
         self.user.is_online = is_online
         self.user.last_seen = timezone.now()
         self.user.save()
+
+    # AI removed
+
+    # AI removed
 
 
 class NotificationConsumer(AsyncWebsocketConsumer):
