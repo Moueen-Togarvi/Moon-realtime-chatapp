@@ -196,15 +196,27 @@ def chat_room(request, room_id):
         # AI user doesn't exist yet, so no rooms are AI rooms
         pass
 
+    unread_notifications = Notification.objects.filter(user=request.user, is_read=False).count()
     online_users = User.objects.filter(is_online=True).exclude(id=request.user.id)
+
+    # Get the AI room separately to avoid duplicates matching chat_list logic
+    ai_room = None
+    regular_rooms = []
+    for room in chat_rooms:
+        if room.is_ai_room and ai_room is None:
+            ai_room = room
+        elif not room.is_ai_room:
+            regular_rooms.append(room)
 
     context = {
         'room': room,
         'messages': messages_qs,
         'other_participants': other_participants,
-        'chat_rooms': chat_rooms,
+        'chat_rooms': regular_rooms,
+        'ai_room': ai_room,
         'online_users': online_users,
         'is_ai_room': is_ai_room,
+        'unread_notifications': unread_notifications,
     }
     return render(request, 'app1/chat_room.html', context)
 
