@@ -5,95 +5,95 @@
 {% block content %}
 <div class="max-w-2xl mx-auto">
     <div class="rounded-lg overflow-hidden glass">
-        <div class="p-6">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-white">Create Group Chat</h2>
-                <a href="{% url 'chat_list' %}" class="text-white hover:text-white font-medium">
-                    ← Back to Chats
+        <div class="p-4">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-lg font-bold text-white">Create Group Chat</h2>
+                <a href="{% url 'chat_list' %}" class="text-white hover:text-white text-sm font-medium">
+                    ← Back
                 </a>
             </div>
-            
-            <form method="post" class="space-y-6">
+
+            <form method="post" class="space-y-3">
                 {% csrf_token %}
-                
+
                 <!-- Group Name -->
                 <div>
-                    <label for="groupName" class="block text-sm font-medium text-white mb-2">Group Name</label>
-                    <input type="text" 
-                           id="groupName" 
-                           name="name" 
-                           required 
-                           class="w-full px-3 py-2 border border-white/10 bg-white/5 text-white placeholder-white/60 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent" 
-                           placeholder="Enter group name">
+                    <label for="groupName" class="block text-xs font-medium text-white mb-1">Group Name</label>
+                    <input type="text" id="groupName" name="name" required
+                        class="w-full px-2 py-1.5 text-sm border border-white/10 bg-white/5 text-white placeholder-white/60 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-transparent"
+                        placeholder="Enter group name">
                 </div>
-                
+
                 <!-- Members Selection -->
                 <div>
-                    <label class="block text-sm font-medium text-white mb-2">Select Members</label>
-                    <div class="max-h-60 overflow-y-auto border border-white/10 rounded-md">
+                    <label class="block text-xs font-medium text-white mb-1">Select Members</label>
+                    <div class="max-h-40 overflow-y-auto border border-white/10 rounded-md">
                         {% for user in users %}
-                        <label class="flex items-center space-x-3 p-3 hover:bg-white/5 border-b border-white/10 last:border-b-0">
-                            <input type="checkbox" 
-                                   name="participants" 
-                                   value="{{ user.id }}" 
-                                   class="rounded border-white/10 bg-white/5 text-blue-500 focus:ring-blue-500/50">
-                            <div class="flex items-center space-x-3 flex-1">
+                        <label
+                            class="flex items-center space-x-2 p-2 hover:bg-white/5 border-b border-white/10 last:border-b-0">
+                            <input type="checkbox" name="participants" value="{{ user.id }}"
+                                class="rounded border-white/10 bg-white/5 text-blue-500 focus:ring-blue-500/50">
+                            <div class="flex items-center space-x-2 flex-1">
                                 <div class="relative">
                                     {% if user.profile_picture %}
-                                        <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" class="w-10 h-10 rounded-full object-cover">
+                                    <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}"
+                                        class="w-8 h-8 rounded-full object-cover">
                                     {% else %}
-                                        <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                            {{ user.username|first|upper }}
-                                        </div>
+                                    <div
+                                        class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                                        {{ user.username|first|upper }}
+                                    </div>
                                     {% endif %}
                                     {% if user.is_online %}
-                                        <div class="online-indicator"></div>
+                                    <div class="online-indicator"></div>
                                     {% else %}
-                                        <div class="offline-indicator"></div>
+                                    <div class="offline-indicator"></div>
                                     {% endif %}
                                 </div>
-                                
+
                                 <div class="flex-1">
-                                    <h3 class="text-sm font-medium text-white">{{ user.username }}</h3>
-                                    <p class="text-sm text-white/70">
+                                    <h3 class="text-xs font-medium text-white">{{ user.username }}</h3>
+                                    <p class="text-xs text-white/70">
                                         {% if user.first_name or user.last_name %}
-                                            {{ user.first_name }} {{ user.last_name }}
+                                        {{ user.first_name }} {{ user.last_name }}
                                         {% else %}
-                                            {{ user.email }}
+                                        {{ user.email }}
                                         {% endif %}
                                     </p>
                                 </div>
-                                
-                                <div class="text-sm text-white/70">
+
+                                <div class="text-xs text-white/70">
                                     {% if user.is_online %}
-                                        <span class="text-blue-400 font-medium">Online</span>
+                                    <span class="text-blue-400 font-medium">Online</span>
                                     {% else %}
-                                        Offline
+                                    Offline
                                     {% endif %}
                                 </div>
                             </div>
                         </label>
                         {% empty %}
                         <div class="p-6 text-center text-white/70">
-                            <svg class="mx-auto h-12 w-12 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            <svg class="mx-auto h-12 w-12 text-white/50" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
                             <h3 class="mt-2 text-sm font-medium text-white">No users available</h3>
                             <p class="mt-1 text-sm text-white/70">There are no other users to add to the group.</p>
                         </div>
                         {% endfor %}
                     </div>
-                    <p class="text-xs text-white/70 mt-2">Select at least one member to create the group.</p>
+                    <p class="text-xs text-white/70 mt-1">Select at least one member to create the group.</p>
                 </div>
-                
+
                 <!-- Action Buttons -->
-                <div class="flex justify-end space-x-3 pt-6 border-t border-white/10">
-                    <a href="{% url 'chat_list' %}" 
-                       class="px-4 py-2 text-sm font-medium text-white bg-white/10 hover:bg-white/20 rounded-md">
+                <div class="flex justify-end space-x-2 pt-3 border-t border-white/10">
+                    <a href="{% url 'chat_list' %}"
+                        class="px-3 py-1.5 text-xs font-medium text-white bg-white/10 hover:bg-white/20 rounded-md">
                         Cancel
                     </a>
-                    <button type="submit" 
-                            class="px-4 py-2 text-sm font-medium text-black bg-gradient-to-r from-white to-gray-700 hover:from-white hover:to-gray-600 rounded-md">
+                    <button type="submit"
+                        class="px-3 py-1.5 text-xs font-medium text-black bg-gradient-to-r from-white to-gray-700 hover:from-white hover:to-gray-600 rounded-md">
                         Create Group
                     </button>
                 </div>
@@ -103,26 +103,26 @@
 </div>
 
 <script>
-// Select all checkbox functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const checkboxes = document.querySelectorAll('input[name="participants"]');
-    const selectAllBtn = document.createElement('button');
-    selectAllBtn.type = 'button';
-    selectAllBtn.className = 'text-sm text-green-600 hover:text-green-700 font-medium mb-2';
-    selectAllBtn.textContent = 'Select All';
-    
-    const membersLabel = document.querySelector('label[for="groupName"]').parentElement.nextElementSibling.querySelector('label');
-    membersLabel.parentElement.insertBefore(selectAllBtn, membersLabel);
-    
-    let allSelected = false;
-    
-    selectAllBtn.addEventListener('click', function() {
-        allSelected = !allSelected;
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = allSelected;
+    // Select all checkbox functionality
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkboxes = document.querySelectorAll('input[name="participants"]');
+        const selectAllBtn = document.createElement('button');
+        selectAllBtn.type = 'button';
+        selectAllBtn.className = 'text-sm text-green-600 hover:text-green-700 font-medium mb-2';
+        selectAllBtn.textContent = 'Select All';
+
+        const membersLabel = document.querySelector('label[for="groupName"]').parentElement.nextElementSibling.querySelector('label');
+        membersLabel.parentElement.insertBefore(selectAllBtn, membersLabel);
+
+        let allSelected = false;
+
+        selectAllBtn.addEventListener('click', function () {
+            allSelected = !allSelected;
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = allSelected;
+            });
+            selectAllBtn.textContent = allSelected ? 'Deselect All' : 'Select All';
         });
-        selectAllBtn.textContent = allSelected ? 'Deselect All' : 'Select All';
     });
-});
 </script>
 {% endblock %}

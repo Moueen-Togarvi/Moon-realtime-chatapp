@@ -29,7 +29,7 @@
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
-        {% if "/chat/" in request.path or "/notifications/" in request.path or "/profile/" in request.path or "/search/" in request.path or "/login/" in request.path or "/register/" in request.path %}
+        {% if "/chat/" in request.path %}
         body {
             overflow: hidden !important;
         }
@@ -169,25 +169,6 @@
             </svg>
         </a>
 
-        <!-- Features -->
-        <a href="{% url 'public_features' %}" class="text-white/80 hover:text-white p-2 rounded-lg" title="Features">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z">
-                </path>
-            </svg>
-        </a>
-
-        <!-- Integrations -->
-        <a href="{% url 'public_integrations' %}" class="text-white/80 hover:text-white p-2 rounded-lg"
-            title="Integrations">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 11-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z">
-                </path>
-            </svg>
-        </a>
-
         <!-- Search Users -->
         <a href="{% url 'search_users' %}" class="text-white/80 hover:text-white p-2 rounded-lg" title="Search Users">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -245,7 +226,7 @@
     </nav>
     <!-- Main Content Wrapper -->
     <div
-        class="{% if '/chat/' in request.path or '/notifications/' in request.path or '/profile/' in request.path or '/search/' in request.path %}fixed inset-0 left-[60px] h-screen overflow-hidden bg-black{% elif '/login/' in request.path or '/register/' in request.path %}fixed inset-0 h-screen overflow-hidden bg-black flex items-center justify-center{% else %}ml-[60px] pt-14{% endif %}">
+        class="{% if '/chat/' in request.path %}fixed inset-0 left-[60px] h-screen overflow-hidden bg-black{% elif '/notifications/' in request.path or '/profile/' in request.path or '/search/' in request.path or '/create-group/' in request.path %}fixed inset-0 left-[60px] h-screen overflow-y-auto bg-black{% elif '/login/' in request.path or '/register/' in request.path %}fixed inset-0 h-screen overflow-y-auto bg-black flex items-center justify-center{% else %}ml-[60px] pt-14{% endif %}">
 
         <!-- Messages -->
         <!-- {% if messages %} ... {% endif %} -->

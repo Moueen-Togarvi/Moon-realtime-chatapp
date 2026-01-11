@@ -33,7 +33,7 @@ content = """{% load static %}
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
-        {% if "/chat/" in request.path or "/notifications/" in request.path or "/profile/" in request.path or "/search/" in request.path or "/login/" in request.path or "/register/" in request.path %}
+        {% if "/chat/" in request.path %}
         body {
             overflow: hidden !important;
         }
@@ -249,7 +249,7 @@ content = """{% load static %}
     </nav>
     <!-- Main Content Wrapper -->
     <div
-        class="{% if '/chat/' in request.path or '/notifications/' in request.path or '/profile/' in request.path or '/search/' in request.path %}fixed inset-0 left-[60px] h-screen overflow-hidden bg-black{% elif '/login/' in request.path or '/register/' in request.path %}fixed inset-0 h-screen overflow-hidden bg-black flex items-center justify-center{% else %}ml-[60px] pt-14{% endif %}">
+        class="{% if '/chat/' in request.path %}fixed inset-0 left-[60px] h-screen overflow-hidden bg-black{% elif '/notifications/' in request.path or '/profile/' in request.path or '/search/' in request.path or '/create-group/' in request.path %}fixed inset-0 left-[60px] h-screen overflow-y-auto bg-black{% elif '/login/' in request.path or '/register/' in request.path %}fixed inset-0 h-screen overflow-y-auto bg-black flex items-center justify-center{% else %}ml-[60px] pt-14{% endif %}">
 
         <!-- Messages -->
         <!-- {% if messages %} ... {% endif %} -->
