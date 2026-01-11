@@ -29,17 +29,11 @@
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
-            {
-            % if "/chat/" in request.path %
-        }
-
+        {% if "/chat/" in request.path %}
         body {
             overflow: hidden !important;
         }
-
-            {
-            % endif %
-        }
+        {% endif %}
 
         /* Stark Monochrome Scrollbar */
         ::-webkit-scrollbar {
@@ -54,14 +48,6 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 4px;
             border: 2px solid var(--bg-primary);
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.4);
-        }
-
-        border: 2px solid transparent;
-        background-clip: content-box;
         }
 
         ::-webkit-scrollbar-thumb:hover {
@@ -308,7 +294,7 @@
             }
             resize(); window.addEventListener('resize', resize); requestAnimationFrame(draw);
             setInterval(() => { if (Math.random() < 0.35) spawn(); }, 4200);
-        })();
+            })();
     </script>
 </body>
 

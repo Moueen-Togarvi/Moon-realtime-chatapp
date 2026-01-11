@@ -126,7 +126,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'message': await self.serialize_message(message)
             }
         )
-        print("Message broadcasted to room group")
+        print(f"Message {message.id} broadcasted to room group {self.room_group_name}")
 
         # Create notifications for offline users
         await self.create_notifications_for_offline_users(message)
@@ -167,6 +167,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'type': 'chat_message',
             'message': message
         }))
+        print(f"Message sent to WebSocket client for user {self.user.username}")
 
     async def typing_indicator(self, event):
         await self.send(text_data=json.dumps({
@@ -188,20 +189,41 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def serialize_message(self, message):
-        return {
-            'id': str(message.id),
-            'sender': {
-                'id': str(message.sender.id),
-                'username': message.sender.username,
-                'profile_picture': message.sender.profile_picture.url if getattr(message.sender, 'profile_picture', None) else None
-            },
-            'content': message.content,
-            'message_type': message.message_type,
-            'media_file': message.media_file.url if message.media_file else None,
-            'timestamp': message.timestamp.isoformat(),
-            'is_read': message.is_read,
-            'reply_to': str(message.reply_to.id) if message.reply_to else None
-        }
+        try:
+            print(f"Serializing message {message.id} for broadcast")
+            sender_profile_url = None
+            if hasattr(message.sender, 'profile_picture') and message.sender.profile_picture:
+                try:
+                    sender_profile_url = message.sender.profile_picture.url
+                except ValueError:
+                    sender_profile_url = None
+
+            media_file_url = None
+            if message.media_file:
+                try:
+                    media_file_url = message.media_file.url
+                except ValueError:
+                    media_file_url = None
+
+            return {
+                'id': str(message.id),
+                'sender': {
+                    'id': str(message.sender.id),
+                    'username': message.sender.username,
+                    'profile_picture': sender_profile_url
+                },
+                'content': message.content,
+                'message_type': message.message_type,
+                'media_file': media_file_url,
+                'timestamp': message.timestamp.isoformat(),
+                'is_read': message.is_read,
+                'reply_to': str(message.reply_to.id) if message.reply_to else None
+            }
+        except Exception as e:
+            print(f"Error serializing message {message.id}: {e}")
+            import traceback
+            traceback.print_exc()
+            return None
 
     # Database operations
     @database_sync_to_async

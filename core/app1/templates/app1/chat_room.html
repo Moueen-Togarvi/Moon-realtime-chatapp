@@ -177,17 +177,17 @@
                             </h3>
                             <p class="text-[10px] text-zinc-500 uppercase tracking-[0.2em] mt-1 font-bold">
                                 {% if room.room_type == 'direct' %}
-                                    {% for participant in other_participants %}
-                                        {% if participant.username == 'AI_Assistant' %}
-                                            Neural Processor Active
-                                        {% elif participant.is_online %}
-                                            Frequency Sync Locked
-                                        {% else %}
-                                            Transmission Offline
-                                        {% endif %}
-                                    {% endfor %}
+                                {% for participant in other_participants %}
+                                {% if participant.username == 'AI_Assistant' %}
+                                Neural Processor Active
+                                {% elif participant.is_online %}
+                                Frequency Sync Locked
                                 {% else %}
-                                    {{ room.participants.count }} Terminals
+                                Transmission Offline
+                                {% endif %}
+                                {% endfor %}
+                                {% else %}
+                                {{ room.participants.count }} Terminals
                                 {% endif %}
                             </p>
                         </div>
@@ -349,8 +349,10 @@
         };
 
         chatSocket.onmessage = function (e) {
+            console.log("WebSocket message received:", e.data);
             const data = JSON.parse(e.data);
             if (data.type === 'chat_message') {
+                console.log("Processing chat message:", data);
                 addMessage(data.message);
                 if (data.message.sender.id !== currentUserId) {
                     chatSocket.send(JSON.stringify({ 'type': 'message_read', 'message_id': data.message.id }));
