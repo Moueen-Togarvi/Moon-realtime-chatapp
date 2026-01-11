@@ -1,4 +1,8 @@
-{% load static %}
+"""
+Script to fix the base.html template by rewriting it with correct syntax
+"""
+
+content = """{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -299,3 +303,10 @@
 </body>
 
 </html>
+"""
+
+# Write the corrected content
+with open(r'y:\worksapace\whatsapp-Clone\core\app1\templates\app1\base.html', 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print("base.html has been fixed successfully!")
