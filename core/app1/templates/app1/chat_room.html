@@ -10,13 +10,36 @@
         height: 100vh;
     }
 
-    /* Monochrome Message Styling */
+    /* Strict Monochrome Palette */
+    :root {
+        --sent-bubble-bg: #ffffff;
+        --sent-bubble-text: #000000;
+        --received-bubble-bg: #1a1a1a;
+        --received-bubble-text: #ffffff;
+        --input-bg: #0a0a0a;
+        --border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden !important;
+        height: 100vh !important;
+        background: black;
+    }
+
+    .chat-container {
+        display: flex;
+        height: 100vh !important;
+        width: 100%;
+        overflow: hidden;
+    }
+
     #messages-container {
         flex: 1;
         min-height: 0;
         overflow-y: auto !important;
         overflow-x: hidden;
-        scroll-behavior: smooth;
         padding: 24px;
         display: flex;
         flex-direction: column;
@@ -26,92 +49,62 @@
 
     .message-bubble {
         max-width: 75%;
-        padding: 12px 16px;
+        padding: 12px 18px;
         font-size: 0.95rem;
-        line-height: 1.5;
+        line-height: 1.6;
         position: relative;
-        transition: transform 0.2s ease;
     }
 
-    /* Sender (You) - High Contrast White */
+    /* Sender (You) - Solid White */
     .message-sender {
         align-self: flex-end;
-        background: #ffffff;
-        color: #000000;
-        border-radius: 18px 18px 2px 18px;
-        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+        background: var(--sent-bubble-bg);
+        color: var(--sent-bubble-text);
+        border-radius: 20px 20px 2px 20px;
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
     }
 
-    /* Receiver - Subtle Dark Gray */
+    /* Receiver - Deep Gray */
     .message-receiver {
         align-self: flex-start;
-        background: #1a1a1a;
-        color: #ffffff;
-        border-radius: 18px 18px 18px 2px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: var(--received-bubble-bg);
+        color: var(--received-bubble-text);
+        border-radius: 20px 20px 20px 2px;
+        border: 1px solid var(--border-color);
     }
 
     .message-input-container {
         background: #000000;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid var(--border-color);
         padding: 20px 24px;
         z-index: 10;
         flex-shrink: 0;
     }
 
     .input-pill {
-        background: #111111;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 28px;
-        padding: 4px 8px 4px 20px;
-        transition: all 0.2s ease;
+        background: var(--input-bg);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 30px;
+        padding: 4px 8px 4px 24px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .input-pill:focus-within {
         border-color: #ffffff;
-        background: #161616;
+        background: #0f0f0f;
     }
 
     #message-input {
-        background: transparent;
-        border: none;
-        color: #ffffff;
+        background: transparent !important;
+        border: none !important;
+        color: #ffffff !important;
         padding: 10px 0;
-        font-size: 0.95rem;
+        font-size: 1rem;
+        box-shadow: none !important;
     }
 
     #message-input:focus {
-        outline: none;
-    }
-
-    .status-indicator {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        display: inline-block;
-    }
-
-    .status-online {
-        background: #ffffff;
-        box-shadow: 0 0 8px #ffffff;
-    }
-
-    .status-offline {
-        border: 1px solid rgba(255, 255, 255, 0.4);
-    }
-
-    /* Custom Scrollbar for Messages */
-    #messages-container::-webkit-scrollbar {
-        width: 5px;
-    }
-
-    #messages-container::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-    }
-
-    #messages-container:hover::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.3);
+        outline: none !important;
     }
 </style>
 {% endblock %}
@@ -119,10 +112,9 @@
 {% block content %}
 <div class="chat-container h-full overflow-hidden">
     <div class="flex h-full w-full">
-        <!-- Sidebar: Chat List (kept visible like home page) -->
+        <!-- Sidebar: Chat List -->
         {% include 'app1/_chat_sidebar.html' %}
 
-        <!-- Main Chat Area -->
         <!-- Main Chat Area -->
         <div class="flex-1 flex flex-col h-full main-chat-area bg-black">
             <!-- Chat Header -->
@@ -185,16 +177,17 @@
                             </h3>
                             <p class="text-[10px] text-zinc-500 uppercase tracking-[0.2em] mt-1 font-bold">
                                 {% if room.room_type == 'direct' %}
-                                {% for participant in other_participants %}
-                                {% if participant.username == 'AI_Assistant' %}
-                                Neural Processor Active
+                                    {% for participant in other_participants %}
+                                        {% if participant.username == 'AI_Assistant' %}
+                                            Neural Processor Active
+                                        {% elif participant.is_online %}
+                                            Frequency Sync Locked
+                                        {% else %}
+                                            Transmission Offline
+                                        {% endif %}
+                                    {% endfor %}
                                 {% else %}
-                                {% if participant.is_online %}Frequency Sync Locked{% else %}Transmission Offline{%
-                                endif %}
-                                {% endif %}
-                                {% endfor %}
-                                {% else %}
-                                {{ room.participants.count }} Terminals
+                                    {{ room.participants.count }} Terminals
                                 {% endif %}
                             </p>
                         </div>
@@ -257,9 +250,7 @@
                         class="flex items-center justify-end mt-2 text-[9px] uppercase tracking-widest font-bold opacity-50">
                         <span>{{ message.timestamp|time }}</span>
                         {% if message.sender == user %}
-                        <span class="ml-2">
-                            {% if message.is_read %}//{% else %}/{% endif %}
-                        </span>
+                        <span class="ml-2">{% if message.is_read %}//{% else %}/{% endif %}</span>
                         {% endif %}
                     </div>
                 </div>
@@ -325,7 +316,6 @@
     </div>
 </div>
 
-<!-- Notification Toast Container -->
 <div id="notification-container"></div>
 
 <script>
@@ -342,12 +332,6 @@
     const statusText = document.getElementById('status-text');
     const askAiBtn = document.getElementById('ask-ai');
 
-    // Check if askAiBtn exists
-    if (!askAiBtn) {
-        console.error('AI button not found in DOM');
-    }
-
-    // WebSocket connection
     let chatSocket;
     let reconnectAttempts = 0;
     const maxReconnectAttempts = 5;
@@ -356,268 +340,113 @@
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const wsUrl = `${protocol}//${window.location.host}/ws/chat/${roomId}/`;
 
-        console.log('Connecting to WebSocket:', wsUrl);
-
         chatSocket = new WebSocket(wsUrl);
 
         chatSocket.onopen = function (e) {
-            console.log('WebSocket connection opened');
             reconnectAttempts = 0;
-            statusIndicator.className = 'w-2 h-2 bg-green-500 rounded-full';
-            statusText.textContent = 'Connected';
+            statusIndicator.className = 'w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_8px_#fff]';
+            statusText.textContent = 'ONLINE';
         };
 
         chatSocket.onmessage = function (e) {
-            console.log('WebSocket message received:', e.data);
             const data = JSON.parse(e.data);
-
             if (data.type === 'chat_message') {
                 addMessage(data.message);
-                // If the incoming message is from someone else, mark it as read
-                if (data.message && data.message.sender && data.message.sender.id !== currentUserId) {
-                    try {
-                        chatSocket.send(JSON.stringify({
-                            'type': 'message_read',
-                            'message_id': data.message.id
-                        }));
-                    } catch (err) {
-                        console.error('Failed to send read receipt:', err);
-                    }
+                if (data.message.sender.id !== currentUserId) {
+                    chatSocket.send(JSON.stringify({ 'type': 'message_read', 'message_id': data.message.id }));
                 }
             } else if (data.type === 'typing_indicator') {
                 handleTypingIndicator(data);
-            } else if (data.type === 'user_status') {
-                handleUserStatus(data);
             }
         };
 
         chatSocket.onclose = function (e) {
-            console.log('WebSocket connection closed:', e.code, e.reason);
-            statusIndicator.className = 'w-2 h-2 bg-red-500 rounded-full';
-            statusText.textContent = 'Disconnected';
-
+            statusIndicator.className = 'w-1.5 h-1.5 bg-zinc-700 rounded-full';
+            statusText.textContent = 'OFFLINE';
             if (reconnectAttempts < maxReconnectAttempts) {
                 reconnectAttempts++;
-                console.log(`Attempting to reconnect... (${reconnectAttempts}/${maxReconnectAttempts})`);
-                statusText.textContent = `Reconnecting... (${reconnectAttempts}/${maxReconnectAttempts})`;
                 setTimeout(connectWebSocket, 2000 * reconnectAttempts);
-            } else {
-                console.error('Max reconnection attempts reached');
-                statusText.textContent = 'Connection failed';
-                alert('Connection lost. Please refresh the page.');
             }
-        };
-
-        chatSocket.onerror = function (e) {
-            console.error('WebSocket error:', e);
-            statusIndicator.className = 'w-2 h-2 bg-red-500 rounded-full';
-            statusText.textContent = 'Error';
         };
     }
 
-    // Initialize WebSocket connection
     connectWebSocket();
 
-    // Message handling
     function addMessage(message) {
         const messageDiv = document.createElement('div');
-        messageDiv.className = `flex ${message.sender.id === currentUserId ? 'justify-end' : 'justify-start'}`;
-
-        // Determine bubble styling based on sender
-        let bubbleClass = 'bg-white/5 text-white'; // Default for others
-        if (message.sender.id === currentUserId) {
-            bubbleClass = 'bg-green-500 text-white'; // Current user
-        } else if (message.sender.username === 'AI_Assistant' || message.sender.id === 'ai-assistant') {
-            bubbleClass = 'bg-blue-500 text-white'; // AI assistant
-        }
+        const isMe = message.sender.id === currentUserId;
+        messageDiv.className = `message-bubble ${isMe ? 'message-sender' : 'message-receiver'}`;
 
         let content = '';
         if (message.message_type === 'image') {
-            content = `<img src="${message.media_file}" alt="Image" class="max-w-xs rounded">`;
+            content = `<img src="${message.media_file}" alt="Image" class="max-w-xs rounded-lg grayscale hover:grayscale-0 transition-all duration-700">`;
         } else if (message.message_type === 'video') {
-            content = `<video controls class="max-w-xs rounded"><source src="${message.media_file}" type="video/mp4"></video>`;
+            content = `<video controls class="max-w-xs rounded-lg grayscale"><source src="${message.media_file}" type="video/mp4"></video>`;
         } else {
             content = `<p>${message.content}</p>`;
         }
 
         messageDiv.innerHTML = `
-        <div class="message-bubble ${bubbleClass} rounded-lg p-3 shadow-sm">
+            ${message.reply_to ? `<div class="border-l-2 ${isMe ? 'border-black/20' : 'border-white/20'} pl-3 mb-3 text-[10px] uppercase font-bold opacity-60"><p>${message.reply_to.sender.username}</p><p class="font-medium normal-case">${message.reply_to.content.substring(0, 40)}...</p></div>` : ''}
             ${content}
-            <div class="flex items-center justify-between mt-1 text-xs opacity-75">
-                <span>${new Date(message.timestamp).toLocaleTimeString()}</span>
-                ${message.sender.id === currentUserId ?
-                `<span>${message.is_read ? '✓✓' : '✓'}</span>` : ''}
+            <div class="flex items-center justify-end mt-2 text-[9px] uppercase tracking-widest font-bold opacity-50">
+                <span>${new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                ${isMe ? `<span class="ml-2">${message.is_read ? '//' : '/'}</span>` : ''}
             </div>
-        </div>
-    `;
+        `;
 
         messagesContainer.appendChild(messageDiv);
+        scrollToBottom();
 
-        // Scroll to bottom after a small delay to ensure DOM updates
-        setTimeout(() => {
-            scrollToBottom();
-        }, 100);
-
-        // Show notification if message is not from current user
-        if (message.sender.id !== '{{ user.id|stringformat:"s" }}') {
-            showNotification(
-                message.sender.username,
-                message.content || 'Sent an attachment',
-                message.sender.username
-            );
+        if (!isMe) {
+            showNotification(message.sender.username, message.content || 'Transmission received', message.sender.username);
         }
     }
 
     function handleTypingIndicator(data) {
         if (data.is_typing) {
-            typingText.textContent = `${data.username} is typing...`;
+            typingText.textContent = `${data.username.toUpperCase()} TRANSMITTING...`;
             typingIndicator.classList.remove('hidden');
         } else {
             typingIndicator.classList.add('hidden');
         }
     }
 
-    function handleUserStatus(data) {
-        // Update online status indicators
-        console.log(`${data.username} is ${data.is_online ? 'online' : 'offline'}`);
-    }
-
-    // Function to scroll to bottom of messages
     function scrollToBottom() {
-        const messagesContainer = document.getElementById('messages-container');
-        if (messagesContainer) {
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-    // Function to show notification toast (Windows 11 style)
     function showNotification(title, message, senderName = '') {
         const container = document.getElementById('notification-container');
-        const toastId = 'toast-' + Date.now();
-
         const toast = document.createElement('div');
-        toast.id = toastId;
-        toast.className = 'notification-toast';
-        toast.innerHTML = `
-        <div class="flex-shrink-0">
-            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold">
-                ${senderName ? senderName.charAt(0).toUpperCase() : 'N'}
-            </div>
-        </div>
-        <div class="flex-1 min-w-0">
-            <h4 class="font-semibold text-gray-900 text-sm truncate">${title}</h4>
-            <p class="text-sm text-gray-600 truncate">${message}</p>
-        </div>
-    `;
-
+        toast.className = 'fixed bottom-4 right-4 bg-white text-black p-4 rounded-lg shadow-2xl z-50 transition-all border border-black max-w-sm';
+        toast.innerHTML = `<h4 class="font-black uppercase text-xs tracking-widest border-b border-black/10 pb-1 mb-1">${title}</h4><p class="text-xs font-bold leading-tight">${message}</p>`;
         container.appendChild(toast);
-
-        // Remove toast after 3 seconds
-        setTimeout(() => {
-            const toastElement = document.getElementById(toastId);
-            if (toastElement) {
-                toastElement.style.animation = 'slideOutRight 0.3s ease-out';
-                setTimeout(() => {
-                    toastElement.remove();
-                }, 300);
-            }
-        }, 3000);
+        setTimeout(() => toast.remove(), 4000);
     }
 
-    // Auto-scroll to bottom on page load
-    window.addEventListener('load', function () {
-        setTimeout(() => {
-            scrollToBottom();
-        }, 300);
-    });
-
-    // Also try on DOMContentLoaded
-    document.addEventListener('DOMContentLoaded', function () {
-        setTimeout(() => {
-            scrollToBottom();
-        }, 300);
-    });
-
-    // Form submission
-    let isSubmitting = false;
-    const sendBtn = document.getElementById('send-btn');
     messageForm.addEventListener('submit', function (e) {
         e.preventDefault();
-
-        // Prevent double submission
-        if (isSubmitting) {
-            console.log('Submission in progress, ignoring duplicate submit');
-            return;
-        }
-
         const message = messageInput.value.trim();
-        if (message && chatSocket && chatSocket.readyState === WebSocket.OPEN) {
-            console.log('Sending message:', message);
-            isSubmitting = true;
-
-            // Provide visual feedback
-            const originalContent = sendBtn.innerHTML;
-            sendBtn.innerHTML = '…';
-            sendBtn.disabled = true;
-
-            chatSocket.send(JSON.stringify({
-                'type': 'chat_message',
-                'content': message,
-                'message_type': 'text'
-            }));
+        if (message && chatSocket.readyState === WebSocket.OPEN) {
+            chatSocket.send(JSON.stringify({ 'type': 'chat_message', 'content': message, 'message_type': 'text' }));
             messageInput.value = '';
-
-            // Reset submitting flag and button after a short delay
-            setTimeout(() => {
-                isSubmitting = false;
-                sendBtn.innerHTML = originalContent;
-                sendBtn.disabled = false;
-            }, 300);
-        } else if (!message) {
-            console.log('No message to send');
-        } else {
-            console.error('WebSocket not ready:', chatSocket ? chatSocket.readyState : 'not connected');
         }
     });
 
-    // Typing indicators
-    let typingTimer;
-    messageInput.addEventListener('input', function () {
-        if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
-            chatSocket.send(JSON.stringify({
-                'type': 'typing'
-            }));
-
-            clearTimeout(typingTimer);
-            typingTimer = setTimeout(() => {
-                if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
-                    chatSocket.send(JSON.stringify({
-                        'type': 'stop_typing'
-                    }));
-                }
-            }, 1000);
-        }
-    });
-
-    // File upload
-    attachBtn.addEventListener('click', function () {
-        fileInput.click();
-    });
+    attachBtn.addEventListener('click', () => fileInput.click());
 
     fileInput.addEventListener('change', function (e) {
         const file = e.target.files[0];
         if (file) {
             const formData = new FormData();
             formData.append('file', file);
-
             fetch('/upload-media/', {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                }
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
             })
-                .then(response => response.json())
+                .then(res => res.json())
                 .then(data => {
                     if (data.success) {
                         chatSocket.send(JSON.stringify({
@@ -631,37 +460,18 @@
         }
     });
 
-    // Ask AI
     if (askAiBtn) {
         askAiBtn.addEventListener('click', function () {
             const text = messageInput.value.trim();
-            if (!text) { messageInput.focus(); return; }
-
-            // Send user message through WebSocket so AI can respond
-            // The user message will be displayed when it comes back through WebSocket
-            if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
-                chatSocket.send(JSON.stringify({
-                    'type': 'chat_message',
-                    'content': text,
-                    'message_type': 'text'
-                }));
+            if (text && chatSocket.readyState === WebSocket.OPEN) {
+                chatSocket.send(JSON.stringify({ 'type': 'chat_message', 'content': text, 'message_type': 'text' }));
+                messageInput.value = '';
+                askAiBtn.disabled = true;
+                setTimeout(() => askAiBtn.disabled = false, 3000);
             }
-
-            // Clear input
-            messageInput.value = '';
-
-            askAiBtn.disabled = true;
-            askAiBtn.textContent = '…';
-
-            // Re-enable button after a short delay (in case WebSocket fails)
-            setTimeout(() => {
-                askAiBtn.disabled = false;
-                askAiBtn.textContent = 'AI';
-            }, 3000);
         });
     }
 
-    // Auto-scroll to bottom
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    window.onload = scrollToBottom;
 </script>
 {% endblock %}
