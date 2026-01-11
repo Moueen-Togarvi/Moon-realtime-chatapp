@@ -29,11 +29,17 @@
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
-        {% if "/chat/" in request.path %}
+            {
+            % if "/chat/" in request.path or "/notifications/" in request.path or "/profile/" in request.path or "/search/" in request.path or "/login/" in request.path or "/register/" in request.path %
+        }
+
         body {
             overflow: hidden !important;
         }
-        {% endif %}
+
+            {
+            % endif %
+        }
 
         /* Stark Monochrome Scrollbar */
         ::-webkit-scrollbar {
@@ -107,7 +113,8 @@
 
     <canvas id="app-stars" class="fixed inset-0 -z-10"></canvas>
 
-    {% if "/chat/" not in request.path %}
+    {% if "/chat/" not in request.path and "/notifications/" not in request.path and "/profile/" not in request.path and
+    "/search/" not in request.path and "/login/" not in request.path and "/register/" not in request.path %}
     <!-- Global top navbar -->
     <header id="app-nav" class="fixed top-0 inset-x-0 z-40 nav-solid transition-all">
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
@@ -144,7 +151,7 @@
 
     <!-- Sidebar Navigation -->
     <nav
-        class="fixed left-0 {% if '/chat/' in request.path %}top-0{% else %}top-6{% endif %} h-full bg-[#0D1117] text-white shadow-lg w-[60px] flex flex-col items-center py-4 space-y-6 z-50 border-r border-white/10">
+        class="fixed left-0 {% if '/chat/' in request.path or '/notifications/' in request.path or '/profile/' in request.path or '/search/' in request.path %}top-0{% else %}top-6{% endif %} h-full bg-[#0D1117] text-white shadow-lg w-[60px] flex flex-col items-center py-4 space-y-6 z-50 border-r border-white/10 {% if '/login/' in request.path or '/register/' in request.path %}hidden{% endif %}">
         <!-- Logo -->
         <div class="mb-4">
             <a href="{% url 'public_home' %}" title="ChatSpace">
@@ -245,7 +252,7 @@
     </nav>
     <!-- Main Content Wrapper -->
     <div
-        class="{% if '/chat/' in request.path %}fixed inset-0 left-[60px] h-screen overflow-hidden bg-black{% else %}ml-[60px] pt-14{% endif %}">
+        class="{% if '/chat/' in request.path or '/notifications/' in request.path or '/profile/' in request.path or '/search/' in request.path %}fixed inset-0 left-[60px] h-screen overflow-hidden bg-black{% elif '/login/' in request.path or '/register/' in request.path %}fixed inset-0 h-screen overflow-hidden bg-black flex items-center justify-center{% else %}ml-[60px] pt-14{% endif %}">
 
         <!-- Messages -->
         <!-- {% if messages %} ... {% endif %} -->
@@ -294,7 +301,7 @@
             }
             resize(); window.addEventListener('resize', resize); requestAnimationFrame(draw);
             setInterval(() => { if (Math.random() < 0.35) spawn(); }, 4200);
-            })();
+        })();
     </script>
 </body>
 
