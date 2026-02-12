@@ -6,7 +6,11 @@ from .models import ChatRoom, Message, TypingIndicator, UserPresence, Notificati
 from django.utils import timezone
 from django.conf import settings
 import uuid
- 
+import logging
+import asyncio
+import google.generativeai as genai
+
+logger = logging.getLogger(__name__)
 
  
 
@@ -132,15 +136,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }
         )
 
-        # Also signal the other participants for real-time sidebar/notification updates
-        # Ensure we don't block the main flow
+        # Signal the other participants for real-time sidebar/notification updates
         await self.broadcast_to_participants(message, message_data)
 
-        # Create notifications for offline users in the "background"
-        import asyncio
+        # Create notifications for offline users in the background
         asyncio.create_task(self.create_notifications_for_offline_users(message))
 
-        # AI features removed
+        # Check if this is an AI room and trigger reply
+        is_ai_room = await self.check_is_ai_room()
+        if is_ai_room:
+            asyncio.create_task(self.trigger_ai_reply(content))
 
     async def handle_typing(self, data):
         await self.channel_layer.group_send(
@@ -194,7 +199,94 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'is_online': event['is_online']
         }))
 
-    # AI removed
+    async def trigger_ai_reply(self, user_prompt):
+        """Handle AI generation and broadcast in the background"""
+        try:
+            # Let users know AI is typing
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'typing_indicator',
+                    'user_id': 'ai',
+                    'username': 'AI_Assistant',
+                    'is_typing': True
+                }
+            )
+
+            # AI Logic
+            api_key = getattr(settings, 'GEMINI_API_KEY', None)
+            model_name = getattr(settings, 'GEMINI_MODEL', 'gemini-flash-latest')
+
+            if not api_key:
+                reply_text = "AI is not configured. Please set GEMINI_API_KEY."
+            else:
+                try:
+                    genai.configure(api_key=api_key)
+                    model = genai.GenerativeModel(model_name)
+                    response = await asyncio.to_thread(model.generate_content, user_prompt)
+                    reply_text = response.text.strip()
+                except Exception as e:
+                    logger.error(f"Gemini error: {e}")
+                    reply_text = "Sorry, I encountered an error processing your request."
+
+            # Save and Broadcast AI Message
+            ai_message = await self.save_ai_message(reply_text)
+            if ai_message:
+                ai_message_data = await self.serialize_message(ai_message)
+                
+                # Broadcast reply
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'chat_message',
+                        'message': ai_message_data
+                    }
+                )
+
+                # Sync sidebar for everyone
+                await self.broadcast_to_participants(ai_message, ai_message_data)
+
+        except Exception as e:
+            logger.error(f"trigger_ai_reply error: {e}")
+        finally:
+            # Stop typing indicator
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'typing_indicator',
+                    'user_id': 'ai',
+                    'username': 'AI_Assistant',
+                    'is_typing': False
+                }
+            )
+
+    @database_sync_to_async
+    def check_is_ai_room(self):
+        try:
+            room = ChatRoom.objects.get(id=self.room_id)
+            if room.room_type == 'direct' and room.participants.count() == 2:
+                return room.participants.filter(username='AI_Assistant').exists()
+            return False
+        except Exception:
+            return False
+
+    @database_sync_to_async
+    def save_ai_message(self, content):
+        try:
+            ai_user, _ = User.objects.get_or_create(
+                username='AI_Assistant',
+                defaults={'first_name': 'AI', 'last_name': 'Assistant', 'is_active': True}
+            )
+            room = ChatRoom.objects.get(id=self.room_id)
+            return Message.objects.create(
+                sender=ai_user,
+                room=room,
+                content=content,
+                message_type='text'
+            )
+        except Exception as e:
+            logger.error(f"save_ai_message error: {e}")
+            return None
 
     @database_sync_to_async
     def serialize_message(self, message):

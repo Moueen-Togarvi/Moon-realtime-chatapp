@@ -1,0 +1,165 @@
+Metadata-Version: 2.4
+Name: channels-sqlite
+Version: 0.1
+Summary: Sqlite3 Based Channel Layer
+Author-email: Siddhartha Khanal <sidkhanal99@gmail.com>
+Project-URL: Homepage, https://github.com/buffmomoeveryday/channels-sqlite
+Classifier: Environment :: Web Environment
+Classifier: Framework :: Django
+Classifier: Framework :: Django :: 5.0
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Topic :: Internet :: WWW/HTTP
+Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content
+Requires-Python: >=3.10
+Description-Content-Type: text/x-rst
+Requires-Dist: django>=5.0
+
+Channels SQLite - Quick Start Guide
+===================================
+
+``channels-sqlite`` is a Django app providing a channels layer backed by SQLite.
+It uses a dedicated SQLite3 database for asynchronous message handling,
+making it lightweight and easy to set up without Redis or other external services.
+
+
+1. Add the app to INSTALLED_APPS
+--------------------------------
+
+.. code-block:: python
+
+    INSTALLED_APPS = [
+        # other apps
+        "channels",
+        "channels_sqlite",
+    ]
+
+
+2. Configure databases
+----------------------
+
+You need **two SQLite databases**: one for your main Django data (``default``),
+and one dedicated to Channels (``channels``).
+
+.. code-block:: python
+
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        },
+        "channels": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "channels.sqlite3",
+            "init_command": "PRAGMA journal_mode=WAL;",
+            "transaction_mode": "IMMEDIATE",
+            "OPTIONS": {
+                "timeout": 20,
+                "init_command": """
+                    PRAGMA journal_mode=WAL;
+                    PRAGMA synchronous=NORMAL;
+                    PRAGMA busy_timeout=20000;
+                    PRAGMA cache_size=-64000;
+                    PRAGMA temp_store=MEMORY;
+                    PRAGMA mmap_size=134217728;
+                """,
+            },
+        },
+    }
+
+.. note::
+
+   WAL mode (Write-Ahead Logging) ensures that multiple readers and a writer
+   can operate concurrently without blocking each other,
+   improving performance for polling-heavy workloads.
+
+
+3. Configure the channel layer
+------------------------------
+
+.. code-block:: python
+
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_sqlite.layers.SqliteChannelLayer",
+            "CONFIG": {
+                "database": "channels",        # must match database alias
+                "polling_interval": 0.05,      # Poll every 50ms
+                "message_retention": 86400,    # Keep messages for 1 day
+                "capacity": 100,               # Max messages per consumer queue
+                "expiry": 30,                  # Message TTL in seconds
+                "trim_batch_size": 100,        # Cleanup batch size
+                "auto_trim": True,             # Auto cleanup old messages
+            },
+        },
+    }
+
+
+4. Add database router
+----------------------
+
+.. code-block:: python
+
+    DATABASE_ROUTERS = [
+        "channels_sqlite.db_routers.ChannelsRouter",
+    ]
+
+This ensures that migrations for ``channels_sqlite`` go into the dedicated
+``channels`` database.
+
+
+5. Apply migrations
+-------------------
+
+Run migrations for both databases:
+
+.. code-block:: bash
+
+    # Default Django models
+    python manage.py migrate
+
+    # Channels-specific tables
+    python manage.py migrate --database=channels
+
+
+6. Start the development server
+-------------------------------
+
+.. code-block:: bash
+
+    python manage.py runserver
+
+Your channel layer is now configured. Django Channels will handle WebSocket
+and background task messages asynchronously using the lightweight
+SQLite ``channels`` database.
+
+
+Example Project
+---------------
+
+This repository also contains an ``example/`` Django project that demonstrates
+how to use ``channels-sqlite`` in practice.
+
+To run the example:
+
+.. code-block:: bash
+
+    cd example
+    uv sync
+    python manage.py migrate
+    python manage.py migrate --database=channels
+    python manage.py runserver
+
+Then open ``http://127.0.0.1:8000/chat`` in your browser to test it.
+
+
+``channels-sqlite`` provides a simple, dependency-free way to get started with
+Django Channels, perfect for development and lightweight deployments.
