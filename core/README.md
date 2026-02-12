@@ -91,9 +91,9 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### Step 6: Run the Server
+### Step 6: Run the Server with Daphne
 ```bash
-python manage.py runserver
+daphne -p 8000 core.asgi:application
 ```
 
 The application will be available at `http://localhost:8000`

@@ -268,13 +268,90 @@
                 const gbg = ctx.createRadialGradient(w * 0.5, h * 0.4, 0, w * 0.5, h * 0.4, Math.max(w, h));
                 gbg.addColorStop(0, '#101826'); gbg.addColorStop(1, '#0D1117');
                 ctx.fillStyle = gbg; ctx.fillRect(0, 0, w, h);
-                layers.forEach(l => { l.stars.forEach(s => { s.a += l.speed; s.x += s.drift * l.speed; const alpha = (Math.sin(s.a) + 1) / 2 * 0.7 + 0.2; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fillStyle = `hsla(${s.hue},80%,88%,${alpha})`; ctx.fill(); if (s.x < 0) s.x = w; if (s.x > w) s.x = 0; }); });
+                layers.forEach(l => { l.stars.forEach(s => { s.a += l.speed; s.x += s.drift * l.speed; const alpha = (Math.sin(s.a) + 1) / 2 * 0.7 + 0.2; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fillStyle = ; ctx.fill(); if (s.x < 0) s.x = w; if (s.x > w) s.x = 0; }); });
                 shooting.forEach(s => { s.x += s.vx; s.y += s.curve * s.vx * 0.1; s.life -= 0.01; const g = ctx.createLinearGradient(s.x - 90, s.y - 22, s.x, s.y); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(1, `rgba(255,255,255,${Math.max(0, s.life)})`); ctx.strokeStyle = g; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(s.x - 90, s.y - 22); ctx.lineTo(s.x, s.y); ctx.stroke(); });
                 shooting = shooting.filter(s => s.life > 0 && s.x < w + 100);
                 requestAnimationFrame(draw);
             }
             resize(); window.addEventListener('resize', resize); requestAnimationFrame(draw);
             setInterval(() => { if (Math.random() < 0.35) spawn(); }, 4200);
+        })();
+
+        // Global Notification System
+        (function () {
+            const currentUserId = '{{ user.id|stringformat:"s" }}';
+            if (!currentUserId || currentUserId === 'None') return;
+
+            function connectNotifications() {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = `${protocol}//${window.location.host}/ws/notifications/`;
+                const notificationSocket = new WebSocket(wsUrl);
+
+                notificationSocket.onopen = function () {
+                    console.log("Global notifications connected.");
+                };
+
+                notificationSocket.onmessage = function (e) {
+                    const data = JSON.parse(e.data);
+                    if (data.type === 'notification' || data.type === 'notification_message') {
+                        const n = data.notification;
+
+                        // 1. Update Notification Badge
+                        const badge = document.getElementById('notification-badge');
+                        if (badge) {
+                            const currentCount = parseInt(badge.textContent || '0');
+                            badge.textContent = currentCount + 1;
+                            badge.classList.remove('hidden');
+                        }
+
+                        // 2. Real-time Sidebar Sync
+                        if (n.type === 'new_message') {
+                            updateSidebar(n.room_id, n.message);
+                        }
+                    }
+                };
+
+                notificationSocket.onclose = function () {
+                    console.log("Global notifications disconnected. Reconnecting...");
+                    setTimeout(connectNotifications, 5000);
+                };
+            }
+
+            function updateSidebar(roomId, message) {
+                const sidebarItem = document.querySelector(`a[href*="/chat/${roomId}/"]`);
+                if (sidebarItem) {
+                    const previewP = sidebarItem.querySelector('p.truncate');
+                    if (previewP) {
+                        const prefix = String(message.sender.id) === currentUserId ? 'You: ' : '';
+                        previewP.textContent = prefix + message.content;
+                        previewP.classList.add('text-white');
+                    }
+
+                    const timestampSpan = sidebarItem.querySelector('span.uppercase.tracking-tighter');
+                    if (timestampSpan) {
+                        timestampSpan.textContent = 'Just Now';
+                    }
+
+                    const currentPath = window.location.pathname;
+                    if (!currentPath.includes(`/chat/${roomId}/`)) {
+                        let unreadSpan = sidebarItem.querySelector('span.bg-white.text-black');
+                        if (!unreadSpan) {
+                            const container = sidebarItem.querySelector('.flex.items-center.justify-between:last-child');
+                            unreadSpan = document.createElement('span');
+                            unreadSpan.className = 'ml-2 inline-flex items-center justify-center w-5 h-5 bg-white text-black text-[10px] font-black rounded-full shadow-[0_0_10px_rgba(255,255,255,0.3)]';
+                            unreadSpan.textContent = '1';
+                            container.appendChild(unreadSpan);
+                        } else {
+                            unreadSpan.textContent = parseInt(unreadSpan.textContent) + 1;
+                        }
+                    }
+                    const parent = sidebarItem.closest('.custom-sidebar-scroll') || sidebarItem.parentElement;
+                    if (parent && parent.firstChild !== sidebarItem) {
+                        parent.prepend(sidebarItem);
+                    }
+                }
+            }
+            connectNotifications();
         })();
     </script>
 </body>

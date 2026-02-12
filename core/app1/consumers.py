@@ -103,6 +103,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message_type = data.get('message_type', 'text')
         media_file = data.get('media_file')
         reply_to_id = data.get('reply_to')
+        temp_id = data.get('temp_id')
 
         print(f"Handling chat message: content='{content}', type='{message_type}', media='{media_file}'")
 
@@ -118,18 +119,26 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         print(f"Message saved with ID: {message.id}")
 
-        # Broadcast user's message
+        # Broadcast user's message IMMEDIATELY for speed
+        message_data = await self.serialize_message(message)
+        if temp_id:
+            message_data['temp_id'] = temp_id
+
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'chat_message',
-                'message': await self.serialize_message(message)
+                'message': message_data
             }
         )
-        print(f"Message {message.id} broadcasted to room group {self.room_group_name}")
 
-        # Create notifications for offline users
-        await self.create_notifications_for_offline_users(message)
+        # Also signal the other participants for real-time sidebar/notification updates
+        # Ensure we don't block the main flow
+        await self.broadcast_to_participants(message, message_data)
+
+        # Create notifications for offline users in the "background"
+        import asyncio
+        asyncio.create_task(self.create_notifications_for_offline_users(message))
 
         # AI features removed
 
@@ -304,6 +313,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             print(f"Error creating notifications: {e}")
 
+    async def broadcast_to_participants(self, message, message_data):
+        """Broadcast signal to all participants for real-time sidebar updates"""
+        try:
+            participants = await self.get_room_participants(message.room)
+            for participant_id in participants:
+                # Send to each participant's notification group
+                await self.channel_layer.group_send(
+                    f'notifications_{participant_id}',
+                    {
+                        'type': 'notification_message',
+                        'notification': {
+                            'type': 'new_message',
+                            'message': message_data,
+                            'room_id': str(message.room.id)
+                        }
+                    }
+                )
+        except Exception as e:
+            print(f"Error broadcasting to participants: {e}")
+
+    @database_sync_to_async
+    def get_room_participants(self, room):
+        return list(room.participants.values_list('id', flat=True))
+
     @database_sync_to_async
     def check_user_is_participant(self):
         """Check if user is a participant in the room"""
@@ -315,14 +348,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def update_user_presence(self, is_online):
-        presence, created = UserPresence.objects.get_or_create(user=self.user)
-        presence.is_online = is_online
-        presence.last_seen = timezone.now()
-        presence.save()
+        try:
+            # Throttle: Only update if status actually changed or enough time passed
+            # For simplicity in this fix, we'll just catch potential lock errors
+            presence, created = UserPresence.objects.get_or_create(user=self.user)
+            if presence.is_online != is_online:
+                presence.is_online = is_online
+                presence.last_seen = timezone.now()
+                presence.save()
 
-        self.user.is_online = is_online
-        self.user.last_seen = timezone.now()
-        self.user.save()
+                self.user.is_online = is_online
+                self.user.last_seen = timezone.now()
+                self.user.save()
+        except Exception as e:
+            print(f"Error updating presence (likely SQLite lock): {e}")
 
     # AI removed
 

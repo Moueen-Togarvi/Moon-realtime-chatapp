@@ -63,7 +63,7 @@
         {% endif %}
 
         {% for room in chat_rooms %}
-        {% if room.room_type != 'ai' %}
+        {% if not room.is_ai_room %}
         <a href="{% url 'chat_room' room.id %}"
             class="flex items-center px-6 py-5 border-b border-white/5 transition-all duration-300 hover:bg-zinc-900 group {% if room.id|stringformat:'s' == room_id|stringformat:'s' %}bg-zinc-900 border-l-4 border-l-white{% endif %}">
 

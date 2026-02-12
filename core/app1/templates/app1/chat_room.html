@@ -340,20 +340,33 @@
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const wsUrl = `${protocol}//${window.location.host}/ws/chat/${roomId}/`;
 
+        console.log("Attempting WebSocket connection...");
         chatSocket = new WebSocket(wsUrl);
 
         chatSocket.onopen = function (e) {
+            console.log("WebSocket connected.");
             reconnectAttempts = 0;
             statusIndicator.className = 'w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_8px_#fff]';
             statusText.textContent = 'ONLINE';
         };
 
         chatSocket.onmessage = function (e) {
-            console.log("WebSocket message received:", e.data);
             const data = JSON.parse(e.data);
             if (data.type === 'chat_message') {
+                console.timeEnd('message-latency');
                 console.log("Processing chat message:", data);
-                addMessage(data.message);
+                
+                // If this is our own message, it might already be in the UI (optimistic)
+                // We should update it or ensure no duplicates
+                const existingOptimistic = document.querySelector(`[data-temp-id="${data.message.temp_id}"]`);
+                if (existingOptimistic) {
+                    existingOptimistic.removeAttribute('data-temp-id');
+                    existingOptimistic.style.opacity = '1';
+                    // Update timestamp or status if needed
+                } else {
+                    addMessage(data.message);
+                }
+
                 if (data.message.sender.id !== currentUserId) {
                     chatSocket.send(JSON.stringify({ 'type': 'message_read', 'message_id': data.message.id }));
                 }
@@ -363,12 +376,22 @@
         };
 
         chatSocket.onclose = function (e) {
+            console.log("WebSocket closed. Reason:", e.reason);
             statusIndicator.className = 'w-1.5 h-1.5 bg-zinc-700 rounded-full';
             statusText.textContent = 'OFFLINE';
+            
+            // Exponential backoff
+            const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 10000);
             if (reconnectAttempts < maxReconnectAttempts) {
                 reconnectAttempts++;
-                setTimeout(connectWebSocket, 2000 * reconnectAttempts);
+                console.log(`Reconnecting in ${delay}ms (Attempt ${reconnectAttempts})...`);
+                setTimeout(connectWebSocket, delay);
             }
+        };
+
+        chatSocket.onerror = function (err) {
+            console.error("WebSocket Error:", err);
+            chatSocket.close();
         };
     }
 
@@ -376,7 +399,7 @@
 
     function addMessage(message) {
         const messageDiv = document.createElement('div');
-        const isMe = message.sender.id === currentUserId;
+        const isMe = message.sender.id === currentUserId || message.is_optimistic;
         messageDiv.className = `message-bubble ${isMe ? 'message-sender' : 'message-receiver'}`;
 
         let content = '';
@@ -400,9 +423,10 @@
         messagesContainer.appendChild(messageDiv);
         scrollToBottom();
 
-        if (!isMe) {
+        if (!isMe && !message.is_optimistic) {
             showNotification(message.sender.username, message.content || 'Transmission received', message.sender.username);
         }
+        return messageDiv;
     }
 
     function handleTypingIndicator(data) {
@@ -429,9 +453,32 @@
 
     messageForm.addEventListener('submit', function (e) {
         e.preventDefault();
-        const message = messageInput.value.trim();
-        if (message && chatSocket.readyState === WebSocket.OPEN) {
-            chatSocket.send(JSON.stringify({ 'type': 'chat_message', 'content': message, 'message_type': 'text' }));
+        const content = messageInput.value.trim();
+        if (content && chatSocket.readyState === WebSocket.OPEN) {
+            const tempId = Date.now().toString();
+            
+            // Optimistic UI update
+            const optimisticMessage = {
+                content: content,
+                sender: { id: currentUserId, username: 'You' },
+                timestamp: new Date().toISOString(),
+                message_type: 'text',
+                is_optimistic: true,
+                temp_id: tempId
+            };
+            
+            const msgDiv = addMessage(optimisticMessage);
+            msgDiv.setAttribute('data-temp-id', tempId);
+            msgDiv.style.opacity = '0.7'; // Indicate send-in-progress
+
+            console.time('message-latency');
+            chatSocket.send(JSON.stringify({ 
+                'type': 'chat_message', 
+                'content': content, 
+                'message_type': 'text',
+                'temp_id': tempId 
+            }));
+            
             messageInput.value = '';
         }
     });
