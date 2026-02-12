@@ -1,0 +1,312 @@
+"""
+Script to fix the base.html template by rewriting it with correct syntax
+"""
+
+content = """{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}WhatsApp Clone{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom CSS -->
+    <style>
+        /* Monochrome Global Styles */
+        :root {
+            --bg-primary: #000000;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        {% if "/chat/" in request.path %}
+        body {
+            overflow: hidden !important;
+        }
+        {% endif %}
+
+        /* Stark Monochrome Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            border: 2px solid var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .typing-indicator {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .online-indicator {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            border: 2px solid white;
+        }
+
+        .offline-indicator {
+            width: 8px;
+            height: 8px;
+            background-color: #6b7280;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            border: 2px solid white;
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-[#0D1117] text-white">
+
+    <canvas id="app-stars" class="fixed inset-0 -z-10"></canvas>
+
+    {% if "/chat/" not in request.path and "/notifications/" not in request.path and "/profile/" not in request.path and "/search/" not in request.path and "/login/" not in request.path and "/register/" not in request.path %}
+    <!-- Global top navbar -->
+    <header id="app-nav" class="fixed top-0 inset-x-0 z-40 nav-solid transition-all">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+            <a href="{% url 'public_home' %}" class="flex items-center gap-2">
+                <span class="relative inline-flex h-6 w-6 items-center justify-center">
+                    <span
+                        class="absolute inline-flex h-full w-full rounded-full bg-gradient-to-tr from-white to-gray-300 opacity-70 blur"></span>
+                    <span
+                        class="relative inline-flex h-6 w-6 rounded-full bg-gradient-to-tr from-white to-gray-300"></span>
+                </span>
+                <span class="font-semibold tracking-tight">ChatSpace</span>
+            </a>
+            <div class="hidden md:flex items-center gap-6 text-sm">
+                <a href="{% url 'chat_list' %}" class="hover:text-gray-200 transition">Chat</a>
+                <a href="{% url 'public_features' %}" class="hover:text-gray-200 transition">Features</a>
+                <a href="{% url 'public_integrations' %}" class="hover:text-gray-200 transition">Integrations</a>
+            </div>
+            <div>
+                {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}"
+                    class="border border-gray-400/40 px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all">Logout</a>
+                {% else %}
+                <a href="{% url 'login' %}"
+                    class="border border-gray-400/40 px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all">Login</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+    {% endif %}
+
+    <!-- Header / Title bar -->
+    <!-- Removed brand bar to keep chat header clean -->
+
+
+    <!-- Sidebar Navigation -->
+    <nav
+        class="fixed left-0 {% if '/chat/' in request.path or '/notifications/' in request.path or '/profile/' in request.path or '/search/' in request.path %}top-0{% else %}top-6{% endif %} h-full bg-[#0D1117] text-white shadow-lg w-[60px] flex flex-col items-center py-4 space-y-6 z-50 border-r border-white/10 {% if '/login/' in request.path or '/register/' in request.path %}hidden{% endif %}">
+        <!-- Logo -->
+        <div class="mb-4">
+            <a href="{% url 'public_home' %}" title="ChatSpace">
+                <span class="relative inline-flex h-6 w-6 items-center justify-center">
+                    <span
+                        class="absolute inline-flex h-full w-full rounded-full bg-gradient-to-tr from-white to-gray-300 opacity-70 blur"></span>
+                    <span
+                        class="relative inline-flex h-6 w-6 rounded-full bg-gradient-to-tr from-white to-gray-300"></span>
+                </span>
+            </a>
+        </div>
+
+        {% if user.is_authenticated %}
+        <!-- Chat -->
+        <a href="{% url 'chat_list' %}"
+            class="text-white/80 hover:text-white p-2 rounded-lg {% if '/chat/' in request.path %}bg-white/10 text-white{% endif %}"
+            title="Chat">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                </path>
+            </svg>
+        </a>
+
+        <!-- Features -->
+        <a href="{% url 'public_features' %}" class="text-white/80 hover:text-white p-2 rounded-lg" title="Features">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z">
+                </path>
+            </svg>
+        </a>
+
+        <!-- Integrations -->
+        <a href="{% url 'public_integrations' %}" class="text-white/80 hover:text-white p-2 rounded-lg"
+            title="Integrations">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 11-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z">
+                </path>
+            </svg>
+        </a>
+
+        <!-- Search Users -->
+        <a href="{% url 'search_users' %}" class="text-white/80 hover:text-white p-2 rounded-lg" title="Search Users">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+        </a>
+
+        <!-- Profile -->
+        <a href="{% url 'profile' %}" class="text-white/80 hover:text-white p-2 rounded-lg" title="Profile">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+        </a>
+
+        <!-- Notifications -->
+        <a href="{% url 'notifications' %}" class="text-white/80 hover:text-white p-2 rounded-lg relative"
+            title="Notifications">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                </path>
+            </svg>
+            <span id="notification-badge"
+                class="absolute -top-1 -right-1 bg-red-500 text-xs w-4 h-4 flex items-center justify-center rounded-full hidden">0</span>
+        </a>
+
+        <!-- Logout -->
+        <a href="{% url 'logout' %}" class="text-white/80 hover:text-white p-2 rounded-lg mt-auto" title="Logout">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                </path>
+            </svg>
+        </a>
+        {% else %}
+        <!-- Login -->
+        <a href="{% url 'login' %}" class="text-white/80 hover:text-white p-2 rounded-lg" title="Login">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
+                </path>
+            </svg>
+        </a>
+
+        <!-- Register -->
+        <a href="{% url 'register' %}" class="text-white/80 hover:text-white p-2 rounded-lg" title="Register">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+            </svg>
+        </a>
+        {% endif %}
+    </nav>
+    <!-- Main Content Wrapper -->
+    <div
+        class="{% if '/chat/' in request.path %}fixed inset-0 left-[60px] h-screen overflow-hidden bg-black{% elif '/notifications/' in request.path or '/profile/' in request.path or '/search/' in request.path or '/create-group/' in request.path %}fixed inset-0 left-[60px] h-screen overflow-y-auto bg-black{% elif '/login/' in request.path or '/register/' in request.path %}fixed inset-0 h-screen overflow-y-auto bg-black flex items-center justify-center{% else %}ml-[60px] pt-14{% endif %}">
+
+        <!-- Messages -->
+        <!-- {% if messages %} ... {% endif %} -->
+
+        <main class="h-full w-full">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <!-- <footer class="bg-gray-800 text-white py-4 mt-auto fixed  w-full left-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center reltive">
+            <p>&copy; 2025 Moon'sApp. Built with Chai, Django, Channels & Tailwind CSS.</p>
+        </div>
+    </footer> -->
+
+
+    <!-- JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% block extra_js %}{% endblock %}
+    <script>
+        (function () {
+            const canvas = document.getElementById('app-stars');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w, h; let layers = []; let shooting = [];
+            function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; makeStars(); }
+            function makeStars() {
+                layers = [
+                    { count: Math.min(35, Math.floor((w * h) / 70000)), speed: 0.02, stars: [] },
+                    { count: Math.min(55, Math.floor((w * h) / 50000)), speed: 0.04, stars: [] },
+                    { count: Math.min(70, Math.floor((w * h) / 35000)), speed: 0.06, stars: [] },
+                ];
+                layers.forEach(l => { l.stars = Array.from({ length: l.count }, () => ({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.3 + 0.2, a: Math.random() * Math.PI * 2, hue: 220 + Math.random() * 40, drift: (Math.random() * 0.6 - 0.3) })); });
+            }
+            function spawn() { const y = Math.random() * h * 0.7; shooting.push({ x: -50, y, vx: Math.random() * 7 + 5, life: 1, curve: Math.random() * 0.2 + 0.05 }); }
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+                const gbg = ctx.createRadialGradient(w * 0.5, h * 0.4, 0, w * 0.5, h * 0.4, Math.max(w, h));
+                gbg.addColorStop(0, '#101826'); gbg.addColorStop(1, '#0D1117');
+                ctx.fillStyle = gbg; ctx.fillRect(0, 0, w, h);
+                layers.forEach(l => { l.stars.forEach(s => { s.a += l.speed; s.x += s.drift * l.speed; const alpha = (Math.sin(s.a) + 1) / 2 * 0.7 + 0.2; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fillStyle = `hsla(${s.hue},80%,88%,${alpha})`; ctx.fill(); if (s.x < 0) s.x = w; if (s.x > w) s.x = 0; }); });
+                shooting.forEach(s => { s.x += s.vx; s.y += s.curve * s.vx * 0.1; s.life -= 0.01; const g = ctx.createLinearGradient(s.x - 90, s.y - 22, s.x, s.y); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(1, `rgba(255,255,255,${Math.max(0, s.life)})`); ctx.strokeStyle = g; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(s.x - 90, s.y - 22); ctx.lineTo(s.x, s.y); ctx.stroke(); });
+                shooting = shooting.filter(s => s.life > 0 && s.x < w + 100);
+                requestAnimationFrame(draw);
+            }
+            resize(); window.addEventListener('resize', resize); requestAnimationFrame(draw);
+            setInterval(() => { if (Math.random() < 0.35) spawn(); }, 4200);
+        })();
+    </script>
+</body>
+
+</html>
+"""
+
+# Write the corrected content
+with open(r'y:\worksapace\whatsapp-Clone\core\app1\templates\app1\base.html', 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print("base.html has been fixed successfully!")

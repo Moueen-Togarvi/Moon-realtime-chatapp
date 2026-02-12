@@ -1,0 +1,106 @@
+{% extends 'app1/base.html' %}
+
+{% block title %}Search Users - Moon'sApp{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="rounded-lg overflow-hidden glass">
+        <!-- Header -->
+        <div class="p-6 bg-white/5 border-b border-white/10">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-semibold text-white">Search Users</h2>
+                <a href="{% url 'chat_list' %}" class="text-white hover:text-white font-medium">
+                    ← Back to Chats
+                </a>
+            </div>
+            
+            <!-- Search Form -->
+            <form method="get" class="mt-4">
+                <div class="relative">
+                    <input type="text" 
+                           name="q" 
+                           value="{{ query }}" 
+                           placeholder="Search by username, name, or email..." 
+                           class="w-full pl-10 pr-4 py-2 border border-white/10 bg-white/5 text-white placeholder-white/60 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400/50 focus:border-transparent">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Users List -->
+        <div class="p-6">
+            {% if users %}
+                <div class="space-y-4">
+                    {% for user in users %}
+                    <div class="flex items-center justify-between p-4 border border-white/10 rounded-lg hover:bg-white/5">
+                        <div class="flex items-center space-x-4">
+                            <div class="relative">
+                                {% if user.profile_picture %}
+                                    <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" class="w-12 h-12 rounded-full object-cover">
+                                {% else %}
+                                    <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                        {{ user.username|first|upper }}
+                                    </div>
+                                {% endif %}
+                                {% if user.is_online %}
+                                    <div class="online-indicator"></div>
+                                {% else %}
+                                    <div class="offline-indicator"></div>
+                                {% endif %}
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-lg font-medium text-white">{{ user.username }}</h3>
+                                <p class="text-sm text-white/70">
+                                    {% if user.first_name or user.last_name %}
+                                        {{ user.first_name }} {{ user.last_name }}
+                                    {% else %}
+                                        {{ user.email }}
+                                    {% endif %}
+                                </p>
+                                {% if user.bio %}
+                                    <p class="text-sm text-white/70 mt-1">{{ user.bio|truncatechars:100 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            <div class="text-sm text-white/70">
+                                {% if user.is_online %}
+                                    <span class="text-white font-medium">Online</span>
+                                {% else %}
+                                    Last seen {{ user.last_seen|timesince }} ago
+                                {% endif %}
+                            </div>
+                            
+                            <a href="{% url 'create_chat' user.id %}" 
+                               class="px-4 py-2 bg-gradient-to-r from-white to-gray-700 hover:from-white hover:to-gray-600 text-black text-sm font-medium rounded-md">
+                                Start Chat
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-12">
+                    <svg class="mx-auto h-12 w-12 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    <h3 class="mt-2 text-sm font-medium text-white">No users found</h3>
+                    <p class="mt-1 text-sm text-white/70">
+                        {% if query %}
+                            Try searching with different keywords.
+                        {% else %}
+                            Start typing to search for users.
+                        {% endif %}
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

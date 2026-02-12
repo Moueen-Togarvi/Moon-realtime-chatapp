@@ -1,0 +1,554 @@
+
+{% extends 'app1/public_base.html' %}
+{% load static %}
+{% block title %}Realtime Chat, Reimagined | ChatSpace{% endblock %}
+
+{% block content %}
+<section id="home" class="relative overflow-hidden">
+  <div class="absolute inset-0 -z-10 blur-3xl top-0">
+    <div class="pointer-events-none select-none opacity-70">
+      <div class="absolute left-1/2 top-0 -translate-x-1/2 h-[520px] w-[1400px] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.18),rgba(0,0,0,0))]"></div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="text-center">
+      <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white">Fastest & Easiest Way to Generate Chats</h1>
+      <p class="mt-4 text-white/80 max-w-2xl mx-auto">Create secure, beautiful conversations for your team. Private by default, realtime delivery, modern UI.</p>
+      <div class="mt-6 flex items-center justify-center gap-3">
+        <a href="{% url 'login' %}" class="px-6 py-3 rounded-lg bg-gradient-to-r from-white to-gray-700 hover:from-white hover:to-gray-600 text-black transition-all">Get Started</a>
+        <a href="{% url 'public_features' %}" class="px-6 py-3 rounded-lg border border-white/10 hover:bg-white/5 transition-all">Explore</a>
+      </div>
+    </div>
+
+    <!-- Showcase row (two glassy, neon cards centered and spaced) -->
+    <div class="flex flex-col items-center justify-center min-h-[540px] py-12 ">
+      <div class="flex flex-col md:flex-row gap-6 justify-center items-center md:items-stretch w-full">
+        <div class="glass neon-card hero-card rounded-2xl shadow-[0_0_32px_8px_rgba(255,255,255,0.10),_0_2px_18px_2px_rgba(107,177,255,0.10)] mb-3 md:mb-0 w-full md:w-[28rem] self-stretch transition-all duration-700 hover:shadow-[0_0_44px_0_rgba(21,127,255,0.21)] border border-white/20 animate-fade-in">
+          <div class="p-8 h-full flex flex-col">
+            <div class="font-semibold text-white text-xl mb-2">New Room</div>
+            <div class="space-y-5 flex-1 flex flex-col">
+          <div>
+                <label class="block text-xs text-white/70 mb-1">Room name</label>
+                <div class="relative">
+                  <input id="demo-room-name" class="w-full px-3 py-2 rounded-md bg-white/10 border border-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-blue-500/30 transition-all pr-10" placeholder="Design Sync" autocomplete="off" />
+                  <span id="demo-caret" class="absolute right-3 top-1/2 -translate-y-1/2 select-none text-blue-300 text-xl opacity-80">|</span>
+            </div>
+          </div>
+          <div>
+                <label class="block text-xs text-white/70 mb-1">Visibility</label>
+                <div class="flex gap-3 mt-1">
+                  <button id="demo-private-btn" class="px-4 py-2 rounded-md bg-white/10 text-white/90 border border-white/20 hover:bg-blue-50/10 focus:bg-blue-100/10">Private</button>
+                  <button id="demo-team-btn" class="px-4 py-2 rounded-md bg-white/10 text-white/90 border border-white/20 font-semibold hover:bg-blue-50/10 focus:bg-blue-100/10">Team</button>
+                  <span id="demo-vis-ripple" style="display:none;position:absolute;width:36px;height:36px;border-radius:50%;background:#0ff9;pointer-events:none;z-index:40;"></span>
+                </div>
+              </div>
+              <div class="mt-auto">
+                <button id="demo-create-btn" class="block w-full px-5 py-2 rounded-lg font-bold bg-white text-gray-800 shadow hover:shadow-lg hover:scale-[1.02] transition relative overflow-hidden">Create Room
+                  <span id="demo-create-checkmark" class="hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl text-green-500 z-10">&#10003;</span>
+                </button>
+                <canvas id="demo-confetti" style="display:none;position:absolute;left:0;top:0;pointer-events:none;z-index:99;"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="glass neon-card hero-card rounded-2xl shadow-[0_0_32px_8px_rgba(255,255,255,0.10),_0_2px_18px_2px_rgba(107,177,255,0.10)] w-full md:w-[28rem] self-stretch mx-auto transition-all duration-700 hover:shadow-[0_0_44px_0_rgba(21,127,255,0.21)] border border-white/20 animate-fade-in flex flex-col">
+          <div class="p-6 md:p-8 h-full flex flex-col">
+            <div class="flex items-start gap-3 mb-3">
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-tr from-white via-gray-200 to-gray-100 text-gray-700 shadow-lg shrink-0 mt-0.5">
+                <svg width="19" height="19" fill="none"><circle cx="9.5" cy="9.5" r="9" fill="#fff"/><path d="M5 10.5h9M7.5 7.5L10 10.5l-2.5 3" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+              <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-2 mb-1">
+                  <span class="text-xl font-bold text-white">Live Workspace</span>
+                  <span class="text-xs font-semibold rounded bg-white/60 text-gray-800 px-2 py-0.5 whitespace-nowrap" id="card2-chip">Screenshare</span>
+                </div>
+                <div class="text-xs text-white/70">Minimal, fast and cohesive — white & gray UI kit</div>
+        </div>
+      </div>
+
+            <!-- mini tabs (chips) -->
+            <div class="flex items-center gap-2 mb-3">
+              <button class="card2-tab active px-3 py-1.5 rounded-full bg-white/70 text-gray-800 text-xs font-semibold">Overview</button>
+              <button class="card2-tab px-3 py-1.5 rounded-full bg-white/20 text-white/90 text-xs">Docs</button>
+              <button class="card2-tab px-3 py-1.5 rounded-full bg-white/20 text-white/90 text-xs">Tasks</button>
+            </div>
+
+            <!-- Panels -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1 mb-2 auto-rows-fr flex-1">
+              <div class="relative rounded-xl overflow-hidden bg-white/10 h-full min-h-[180px] flex">
+                <div class="absolute inset-0 bg-gradient-to-br from-white/10 via-white/5 to-white/0"></div>
+                <div class="relative z-10 w-full h-full flex flex-col justify-center px-4">
+                  <div class="h-3.5 w-24 rounded bg-white/40 mb-3 animate-card2-shimmer"></div>
+                  <div class="rounded-2xl bg-white/85 text-gray-900 font-semibold flex items-center px-3 py-2 shadow">Design system update shipped</div>
+                  <div class="mt-2 rounded-2xl bg-white/70 text-gray-800 px-3 py-1.5 inline-flex items-center gap-2">
+                    <span class="text-xs">Replying</span>
+                    <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="relative rounded-xl overflow-hidden bg-white/10 h-full min-h-[180px] p-4 grid grid-rows-3 gap-3">
+                <div class="grid grid-cols-3 gap-3 text-center">
+                  <div class="glass rounded-lg py-2">
+                    <div class="text-[10px] text-white/70">Throughput</div>
+                    <div id="kpi1" class="text-white font-bold">92%</div>
+                  </div>
+                  <div class="glass rounded-lg py-2">
+                    <div class="text-[10px] text-white/70">Stability</div>
+                    <div id="kpi2" class="text-white font-bold">99%</div>
+                  </div>
+                  <div class="glass rounded-lg py-2">
+                    <div class="text-[10px] text-white/70">Latency</div>
+                    <div id="kpi3" class="text-white font-bold">120ms</div>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between text-xs text-white/80">
+                  <span>Build</span><span id="kpi-build">v1.4.2</span>
+                </div>
+                <div class="h-2 rounded bg-white/20 overflow-hidden"><div id="card2-progress" class="h-full bg-white/70 rounded" style="width:60%"></div></div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-center mt-auto">
+              <div class="w-full h-3 bg-gradient-to-r from-white/50 via-white/20 to-gray-200/60 rounded-full shadow-inner"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <style>
+      .animate-card2-shimmer{ position:relative; overflow:hidden; }
+      .animate-card2-shimmer::after{ content:""; position:absolute; inset:0; transform:translateX(-100%); background:linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent); animation:card2-shimmer 1.6s infinite; }
+      @keyframes card2-shimmer{ 100%{ transform:translateX(100%);} }
+      .typing-dot{ width:6px; height:6px; border-radius:9999px; background:#6b7280; display:inline-block; animation:typingBlink 1.2s infinite; }
+      .typing-dot:nth-child(2){ animation-delay:.2s } .typing-dot:nth-child(3){ animation-delay:.4s }
+      @keyframes typingBlink{ 0%,80%,100%{ opacity:.3; transform:translateY(0);} 40%{ opacity:1; transform:translateY(-2px);} }
+      .card2-tab.active{ box-shadow:0 0 0 2px rgba(255,255,255,.5) inset; }
+    </style>
+
+        <script>
+        // Card 2 interactions: rotating chip, kpi counters, progress pulse, tab active cycling
+        (function cardTwoAnimate(){
+          const chip = document.getElementById('card2-chip');
+          const chips = ['Screenshare','Docs','Tasks','Realtime','Secure'];
+          let idx=0; setInterval(()=>{ idx=(idx+1)%chips.length; chip.textContent = chips[idx]; }, 1800);
+
+          function tweenNumber(el, to, suffix=''){ const from=parseInt(el.textContent)||0; const steps=20; let s=0; const delta=(to-from)/steps; const t=setInterval(()=>{ s++; const v=Math.round(from+delta*s); el.textContent = v + suffix; if(s>=steps) clearInterval(t); }, 40); }
+          const k1=document.getElementById('kpi1'); const k2=document.getElementById('kpi2'); const k3=document.getElementById('kpi3'); const prog=document.getElementById('card2-progress');
+          setInterval(()=>{ tweenNumber(k1, Math.floor(70+Math.random()*25), '%'); tweenNumber(k2, Math.floor(96+Math.random()*3), '%'); tweenNumber(k3, Math.floor(90+Math.random()*80), 'ms'); prog.style.width = (50+Math.random()*45).toFixed(0)+'%'; }, 2200);
+
+          const tabs = Array.from(document.querySelectorAll('.card2-tab'));
+          let ti=0; setInterval(()=>{ tabs.forEach(t=>t.classList.remove('active')); tabs[ti].classList.add('active'); ti=(ti+1)%tabs.length; }, 2400);
+        })();
+        </script>
+    </div>
+  </div>
+    <style>
+      .animate-fade-in { opacity:0; animation:fadeInCard .9s cubic-bezier(.22,.49,.45,1.13) .13s forwards; }
+      @keyframes fadeInCard { from{opacity:0;transform:translateY(36px);} to{opacity:1;transform:translateY(0);} }
+    </style>
+
+  <!-- Social proof / logos strip -->
+  <div class="mt-10 text-center">
+    <div class="text-white/60 text-xs">Trusted by teams</div>
+    <div class="mt-3 grid grid-cols-3 sm:grid-cols-6 gap-4 max-w-4xl mx-auto">
+      {% for _ in '123456' %}
+      <div class="h-6 rounded bg-white/5"></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="features" class="py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="shadow-[0_0_32px_8px_rgba(255,255,255,0.10),_0_2px_18px_2px_rgba(107,177,255,0.10)] glass neon-card rounded-2xl p-6 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)] hover:-translate-y-1 transition-all" data-animate>
+        <i data-lucide="lock" class="w-6 h-6 text-blue-400"></i>
+        <h3 class="mt-4 font-semibold text-white">Private by Default</h3>
+        <p class="mt-2 text-white/80 text-sm">Your conversations are protected. Privacy-first architecture across the stack.</p>
+      </div>
+      <div class="glass rounded-2xl p-6 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)] hover:-translate-y-1 transition-all" data-animate>
+        <i data-lucide="zap" class="w-6 h-6 text-blue-400"></i>
+        <h3 class="mt-4 font-semibold text-white">Realtime Messaging</h3>
+        <p class="mt-2 text-white/80 text-sm">Powered by WebSockets for instant delivery and typing indicators.</p>
+      </div>
+      <div class="glass rounded-2xl p-6 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)] hover:-translate-y-1 transition-all" data-animate>
+        <i data-lucide="message-circle" class="w-6 h-6 text-blue-400"></i>
+        <h3 class="mt-4 font-semibold text-white">Modern Design</h3>
+        <p class="mt-2 text-white/80 text-sm">Cursor-grade UI with glass surfaces, neon glows and fluid motion.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Secondary showcase band -->
+<section class="py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-8 items-center">
+    <div class="glass rounded-2xl p-6" data-animate>
+      <h3 class="text-2xl font-semibold text-white">Powerful editor for crafting conversations</h3>
+      <p class="mt-3 text-white/80">Compose, preview, and send messages with attachments in a blazing-fast, elegant interface.</p>
+      <div class="mt-6 h-56 rounded-xl bg-gradient-to-br from-white-300 to-grey-900 flex items-end p-4">
+        <div class="w-full h-2 rounded bg-gradient-to-r from-white-300 to-grey-900"></div>
+      </div>
+    </div>
+    <div class="grid gap-6" data-animate>
+      <div class="glass rounded-xl p-5">
+        <div class="flex items-center gap-3">
+          <i data-lucide="images" class="w-5 h-5 text-blue-400"></i>
+          <div class="text-white font-medium">Voice & Media Uploads</div>
+        </div>
+        <p class="text-white/70 text-sm mt-2">Share images, videos, and voice notes with real-time delivery.</p>
+      </div>
+      <div class="glass rounded-xl p-5">
+        <div class="flex items-center gap-3">
+          <i data-lucide="shield" class="w-5 h-5 text-blue-400"></i>
+          <div class="text-white font-medium">End-to-end Protection</div>
+        </div>
+        <p class="text-white/70 text-sm mt-2">Secure by design with robust transport and storage practices.</p>
+      </div>
+    </div>
+  </div>
+  </section>
+
+
+<!-- Visual Story: How it Works -->
+<section id="story" class="py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 items-center">
+    <!-- Left: animated canvas/graphic -->
+    <div class="relative" data-animate>
+      <div class="aspect-square w-full max-w-md mx-auto glass rounded-3xl overflow-hidden flex items-center justify-center">
+        <svg id="story-graphic" viewBox="0 0 200 200" class="w-3/4 h-3/4">
+          <defs>
+            <radialGradient id="orbGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0.4"/>
+            </radialGradient>
+          </defs>
+          <circle id="orb" cx="100" cy="100" r="38" fill="url(#orbGrad)"></circle>
+          <g id="sparkles" fill="white" opacity="0.8">
+            <circle cx="40" cy="40" r="1"/>
+            <circle cx="170" cy="70" r="1.5"/>
+            <circle cx="60" cy="160" r="1.2"/>
+          </g>
+          <path id="progress" d="M20 180 Q 100 20 180 180" stroke="#6EA8FF" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="0 600"></path>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Right: steps and text -->
+    <div class="space-y-6" id="story-steps">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/70 text-xs">How it works</div>
+      <h3 class="text-3xl font-bold text-white">From input to magic — in three simple steps</h3>
+      <div class="space-y-4">
+        <div class="step glass rounded-xl p-4 border border-white/10" data-step="1">
+          <div class="flex items-center gap-3">
+            <span class="w-6 h-6 rounded-full bg-blue-500 flex-shrink-0"></span>
+            <div>
+              <div class="text-white font-semibold">1. Upload Input</div>
+              <p class="text-white/70 text-sm">Drop images or text. We handle validation and optimized uploads.</p>
+            </div>
+          </div>
+        </div>
+        <div class="step glass rounded-xl p-4 border border-white/10" data-step="2">
+          <div class="flex items-center gap-3">
+            <span class="w-6 h-6 rounded-full bg-purple-500 flex-shrink-0"></span>
+            <div>
+              <div class="text-white font-semibold">2. AI Processes</div>
+              <p class="text-white/70 text-sm">Realtime engine routes your content through Channels and workers.</p>
+            </div>
+          </div>
+        </div>
+        <div class="step glass rounded-xl p-4 border border-white/10" data-step="3">
+          <div class="flex items-center gap-3">
+            <span class="w-6 h-6 rounded-full bg-blue-400 flex-shrink-0"></span>
+            <div>
+              <div class="text-white font-semibold">3. Magic Output</div>
+              <p class="text-white/70 text-sm">Instant delivery to your chat with previews, read receipts, and toasts.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About preview band -->
+<!-- <section id="about-preview" class="py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 items-center">
+    <div class="relative" data-animate>
+      <div class="h-80 w-full rounded-3xl bg-gradient-to-tr from-blue-500/40 to-purple-500/40 blur-2xl"></div>
+      <div class="absolute inset-6 rounded-3xl glass"></div>
+    </div>
+    <div data-animate>
+      <h3 class="text-3xl font-bold text-white">Built with Django + Channels + Tailwind</h3>
+      <p class="mt-3 text-white/80">ChatSpace is engineered for realtime performance and privacy. Modern glass UI, websocket delivery, media handling, and notifications — all tuned for developers.</p>
+      <div class="mt-6 flex gap-3">
+        <a href="{% url 'public_about' %}" class="px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600">About ChatSpace</a>
+        <a href="{% url 'public_integrations' %}" class="px-6 py-3 rounded-lg border border-white/10 hover:bg-white/5">Integrations</a>
+      </div>
+    </div>
+  </div>
+</section> -->
+
+<!-- Use Cases preview band -->
+<section id="use-cases-preview" class="py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-end justify-between">
+      <h3 class="text-3xl font-bold text-white">Where teams use ChatSpace</h3>
+      <a href="{% url 'public_use_cases' %}" class="text-blue-400 hover:text-blue-300">View all →</a>
+    </div>
+    <div class="mt-8 grid md:grid-cols-3 gap-6">
+      <div class="glass neon-card rounded-2xl p-6" data-animate>
+        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500"></div>
+        <h4 class="mt-4 text-white font-semibold">Customer Support</h4>
+        <p class="mt-2 text-white/70 text-sm">Faster resolution with realtime rooms and media.</p>
+      </div>
+      <div class="glass neon-card rounded-2xl p-6" data-animate>
+        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500"></div>
+        <h4 class="mt-4 text-white font-semibold">Team Standups</h4>
+        <p class="mt-2 text-white/70 text-sm">Daily syncs with presence and notifications.</p>
+      </div>
+      <div class="glass neon-card rounded-2xl p-6" data-animate>
+        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500"></div>
+        <h4 class="mt-4 text-white font-semibold">Community Channels</h4>
+        <p class="mt-2 text-white/70 text-sm">Open groups with moderation and media sharing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Big CTA band -->
+<section class="py-24">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h3 class="text-3xl sm:text-4xl font-extrabold text-white">Turn ideas into conversations in seconds.</h3>
+    <p class="mt-3 text-white/80">Start with a click. No onboarding friction.</p>
+    <div class="mt-6 flex items-center justify-center gap-4">
+      <a href="{% url 'login' %}" class="px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 transition-all">Get Started</a>
+      <a href="{% url 'public_features' %}" class="px-6 py-3 rounded-lg border border-white/10 hover:bg-white/5 transition-all">Browse Features</a>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 items-center">
+    <div class="relative" data-animate>
+      <div class="h-80 w-full rounded-3xl bg-gradient-to-tr from-blue-500/40 to-purple-500/40 blur-2xl"></div>
+      <div class="absolute inset-6 rounded-3xl glass"></div>
+    </div>
+    <div data-animate>
+      <h2 class="text-3xl font-bold text-white">Built with passion by Moueen</h2>
+      <p class="mt-3 text-white">Powered by Django, Channels, and Tailwind CSS. Inspired by the fluid experience of modern tools like Cursor.</p>
+      <div class="mt-6 grid sm:grid-cols-2 gap-4 text-sm">
+        <div class="glass rounded-xl p-4 text-white">Django + Channels</div>
+        <div class="glass rounded-xl p-4 text-white">Tailwind UI</div>
+        <div class="glass rounded-xl p-4 text-white">WebSocket realtime</div>
+        <div class="glass rounded-xl p-4 text-white">Premium UX details</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="py-24">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl font-bold text-white">Contact</h2>
+    <p class="mt-2 text-white">We’ll get back to you as soon as possible.</p>
+    <form class="mt-10 glass rounded-2xl p-6 space-y-4" id="landing-contact-form">
+      <div>
+        <label class="text-sm text-white">Name</label>
+        <input type="text" required class="mt-1 w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500/50">
+      </div>
+      <div>
+        <label class="text-sm text-white">Email</label>
+        <input type="email" required class="mt-1 w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500/50">
+      </div>
+      <div>
+        <label class="text-sm text-white">Message</label>
+        <textarea rows="5" required class="mt-1 w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500/50"></textarea>
+      </div>
+      <button type="submit" class="w-full px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 transition-all duration-300">Send Message</button>
+    </form>
+    <div id="landing-toast" class="hidden fixed top-6 right-6 glass rounded-lg px-4 py-3 text-sm">Message sent!</div>
+  </div>
+</section>
+
+{% block extra_js %}
+<script>
+document.getElementById('landing-contact-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  const t = document.getElementById('landing-toast');
+  t.classList.remove('hidden');
+  setTimeout(()=> t.classList.add('hidden'), 2500);
+});
+
+// Visual Story interactions (Framer Motion-like with Web Animations / IntersectionObserver)
+(function(){
+  const steps = Array.from(document.querySelectorAll('#story-steps .step'));
+  const progress = document.getElementById('progress');
+  const orb = document.getElementById('orb');
+  let active = 0;
+
+  function setActive(i){
+    active = i;
+    steps.forEach((el, idx)=>{
+      if(idx===i){ el.classList.add('ring-1','ring-blue-500/50'); el.style.transform='translateY(-2px)'; el.style.transition='transform 300ms'; }
+      else { el.classList.remove('ring-1','ring-blue-500/50'); el.style.transform='translateY(0)'; }
+    });
+    // Path reveal
+    const len = 520; // approximate path length
+    const dash = Math.min(len, (i+1)/steps.length * len);
+    progress.setAttribute('stroke-dasharray', `${dash} ${len}`);
+    // Orb pulse and move slightly
+    const targets = [{x:80,y:120},{x:100,y:90},{x:125,y:110}];
+    const p = targets[i];
+    orb.animate([
+      {transform:`translate(0,0) scale(1)`},
+      {transform:`translate(${p.x-100}px,${p.y-100}px) scale(1.06)`}
+    ], {duration:500, fill:'forwards', easing:'cubic-bezier(.2,.6,.2,1)'});
+  }
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){
+      // compute which step is centered in viewport
+      const rects = steps.map(s=> s.getBoundingClientRect());
+      const mid = window.innerHeight/2;
+      let idx = 0, best = 1e9;
+      rects.forEach((r,i)=>{ const d = Math.abs((r.top+r.bottom)/2 - mid); if(d<best){best=d; idx=i;} });
+      setActive(idx);
+    }});
+  }, {threshold: 0.2});
+  steps.forEach(s=> io.observe(s));
+})();
+
+/*** CARD 1 ANIMATION: Simple, clean, correct spelling ***/
+(function cardOneDemo(){
+const ROOM_NAMES = Object.freeze(['Design Sync','Work Room','Team Call','Daily Meeting','VIP Support']);
+let nameIdx = 0; // always start from the first name
+const roomName = document.getElementById('demo-room-name');
+const caret = document.getElementById('demo-caret');
+const privBtn = document.getElementById('demo-private-btn');
+const teamBtn = document.getElementById('demo-team-btn');
+const createBtn = document.getElementById('demo-create-btn');
+let fakeCursor = document.querySelector('.demo-fake-cursor');
+if (!fakeCursor) { fakeCursor = document.createElement('div'); fakeCursor.className='demo-fake-cursor'; document.body.appendChild(fakeCursor); }
+function moveCursorTo(el, duration=1200, offset=[0,0]){
+  const r=el.getBoundingClientRect(); const sx=window.scrollX||0, sy=window.scrollY||0;
+  fakeCursor.style.transition=`top ${duration}ms cubic-bezier(.62,.09,.14,.97), left ${duration}ms cubic-bezier(.62,.09,.14,.97)`;
+  fakeCursor.style.left=(r.left+sx+r.width/2-12+offset[0])+'px';
+  fakeCursor.style.top=(r.top+sy+r.height/2-12+offset[1])+'px';
+}
+async function typeNameSlow(name){
+  roomName.focus(); roomName.classList.add('demo-input-glow'); caret.style.opacity=1; roomName.value='';
+  for(let i=0;i<name.length;i++){ roomName.value+=name[i]; await new Promise(r=>setTimeout(r,220)); }
+  caret.style.opacity=0; roomName.classList.remove('demo-input-glow');
+  await new Promise(r=>setTimeout(r,900));
+}
+async function selectVisibility(){
+  const target = Math.random()<0.5?privBtn:teamBtn;
+  [privBtn,teamBtn].forEach(b=>b.classList.remove('demo-selected'));
+  target.classList.add('demo-selected');
+  const rip=document.createElement('span'); rip.className='demo-ripple'; rip.style.left='50%'; rip.style.top='50%'; rip.style.width=rip.style.height='36px'; target.appendChild(rip); setTimeout(()=>rip.remove(),560);
+  await new Promise(r=>setTimeout(r,900));
+  target.classList.remove('demo-selected');
+}
+async function pressCreate(){
+  createBtn.classList.add('demo-selected');
+  const rip=document.createElement('span'); rip.className='demo-ripple'; rip.style.left='50%'; rip.style.top='50%'; rip.style.width=rip.style.height='48px'; createBtn.appendChild(rip); setTimeout(()=>rip.remove(),520);
+  buttonPetalShower(createBtn);
+  await new Promise(r=>setTimeout(r,600));
+  createBtn.classList.remove('demo-selected');
+}
+
+function buttonPetalShower(target){
+  try{
+    const rect = target.getBoundingClientRect();
+    const cx = rect.left + rect.width/2 + window.scrollX;
+    const topY = rect.top + window.scrollY - 10; // start just above button
+    const petals = ['🌸','💮','🌼','✨'];
+    const n = 18;
+    for(let i=0;i<n;i++){
+      const s = document.createElement('span');
+      s.textContent = petals[i % petals.length];
+      s.style.position='absolute';
+      s.style.left = (cx + (Math.random()*80-40))+'px';
+      s.style.top = (topY - Math.random()*20)+'px';
+      s.style.fontSize = (1.1 + Math.random()*0.6)+'em';
+      s.style.pointerEvents='none';
+      s.style.opacity = '1';
+      document.body.appendChild(s);
+      const dy = 60 + Math.random()*60; // fall distance
+      const dx = (Math.random()*40-20); // slight drift
+      requestAnimationFrame(()=>{
+        s.style.transition = 'transform 1.1s cubic-bezier(.22,1,.36,1), opacity 1.1s ease-out';
+        s.style.transform = `translate(${dx}px, ${dy}px) rotate(${(Math.random()*80-40)}deg)`;
+        s.style.opacity = '0';
+      });
+      setTimeout(()=> s.remove(), 1150);
+    }
+  }catch(e){}
+}
+
+// Extra guard: reset index if it somehow drifts
+window.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible'){ nameIdx = nameIdx % ROOM_NAMES.length; }});
+
+/*** CARD 2 ANIMATION: Chat Image Preview ***/
+(function cardTwoDemo(){
+const figs = Array.from(document.querySelectorAll('.neon-card .grid-cols-2 figure'));
+const stickerList = ['❤️','🔥','😂','🚀','👍'];
+let idx = 0;
+async function cycleGallery() {
+  while(true) {
+    let prev = figs[(idx-1+figs.length)%figs.length];
+    if(prev) prev.classList.remove('card2-show','card2-sticker');
+    let f = figs[idx];
+    f.classList.add('card2-show');
+    await new Promise(r=>setTimeout(r, 1300));
+    // Emoji sticker pop
+    if(stickerList[idx%stickerList.length]){
+      let em = document.createElement('div');
+      em.textContent = stickerList[idx%stickerList.length];
+      em.className = 'gallery-sticker';
+      f.appendChild(em);
+      f.classList.add('card2-sticker');
+      await new Promise(r=>setTimeout(r, 550));
+      em.remove();
+      f.classList.remove('card2-sticker');
+    }
+    f.classList.remove('card2-show');
+    idx = (idx+1)%figs.length;
+    await new Promise(r=>setTimeout(r, 380));
+  }
+}
+cycleGallery();
+})();
+  </script>
+  <style>
+.demo-fake-cursor {
+      position: absolute;
+      width: 28px; height: 28px;
+  top: 0; left: 0; pointer-events: none; z-index: 55;
+  background: url('https://cdn.jsdelivr.net/gh/GoogleChromeLabs/puppeteer-examples@master/assets/cursor-pointer.svg') no-repeat center/85%;
+  filter: drop-shadow(0 1px 6px #000A);
+  transition: top .7s cubic-bezier(.62,.09,.14,.97), left .7s cubic-bezier(.62,.09,.14,.97);
+}
+.demo-selected { outline: 3px solid #2196f3 !important; box-shadow:0 0 8px #2196f366,0 0 0 2px #2196f3a7  } 
+.demo-avatar { font-weight:600; font-size:1.11em; display:flex; align-items:center; justify-content:center; border:2px solid #000; border-radius:50%; }
+.demo-ripple {
+  position:absolute; border-radius:50%; z-index:49; pointer-events:none;
+  animation: demo-ripple-anim .56s cubic-bezier(0,.69,.67,1.63) forwards;
+}
+@keyframes demo-ripple-anim { from{transform:scale(0); opacity:.19;} to{transform:scale(2.8); opacity:0;} }
+.gallery-sticker { font-size:2.1em; position:absolute; bottom:18px; right:16px; pointer-events:none; animation:popSticker .4s cubic-bezier(.72,1.8,.13,.97) both; }
+@keyframes popSticker{ 0%{transform:scale(0.1);} 68%{transform:scale(1.22);} 88%{transform:scale(.91);} 100%{transform:scale(1);} }
+.card2-show { box-shadow:0 0 44px #fff5, 0 3px 36px #07c8f5cc !important; transform:scale(1.03); z-index:2; } 
+.card2-sticker { background:#0002; }
+  .demo-input-glow { box-shadow: 0 0 0 2px rgba(255,255,255,.25), 0 0 28px rgba(255,255,255,.18); }
+  @keyframes demo-avatar-pulse { 0%{transform:scale(1)} 60%{transform:scale(1.12)} 100%{transform:scale(1)} }
+  .demo-avatar-once { animation: demo-avatar-pulse 900ms cubic-bezier(.42,.0,.2,1) 1; }
+  /* Equal card sizing */
+  .hero-card { min-height: 22rem; }
+  </style>
+{% endblock %}
+{% endblock %}
+
+

@@ -1,0 +1,162 @@
+<div class="w-[350px] bg-black border-r border-white/10 flex flex-col chats-sidebar">
+    <!-- Header -->
+    <div class="p-6 bg-black border-b border-white/10">
+        <div class="flex items-center justify-between">
+            <h2 class="text-2xl font-black text-white uppercase tracking-tighter">Messages</h2>
+            <div class="flex space-x-2">
+                <a href="{% url 'create_group_chat' %}" class="p-2 text-zinc-500 hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                </a>
+                <a href="{% url 'search_users' %}" class="p-2 text-zinc-500 hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="mt-5">
+            <div class="relative group">
+                <input type="text" placeholder="Search Logs..."
+                    class="w-full pl-10 pr-4 py-2 bg-zinc-900 border border-transparent rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:border-white/20 transition-all text-sm">
+                <div
+                    class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-600 group-focus-within:text-white transition-colors">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat List -->
+    <div class="flex-1 overflow-y-auto custom-sidebar-scroll">
+        <!-- AI Assistant Record -->
+        {% if ai_room %}
+        <a href="{% url 'chat_room' ai_room.id %}"
+            class="flex items-center px-6 py-5 border-b border-white/5 transition-all duration-300 hover:bg-zinc-900 group {% if ai_room.id|stringformat:'s' == room_id|stringformat:'s' %}bg-zinc-900 border-l-4 border-l-white{% endif %}">
+            <div class="relative">
+                <div
+                    class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-black font-bold text-xl shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                    AI
+                </div>
+                <div
+                    class="absolute bottom-0 right-0 w-3 h-3 bg-white border-2 border-black rounded-full shadow-[0_0_10px_#fff]">
+                </div>
+            </div>
+
+            <div class="ml-4 flex-1 min-w-0">
+                <div class="flex items-center justify-between mb-0.5">
+                    <h4 class="text-sm font-bold text-white tracking-tight uppercase">AI Assistant</h4>
+                    <span class="text-[9px] text-zinc-600 font-bold uppercase tracking-widest">Active</span>
+                </div>
+                <p class="text-[12px] text-zinc-500 truncate font-medium group-hover:text-zinc-300">Neural Logic
+                    Interface</p>
+            </div>
+        </a>
+        {% endif %}
+
+        {% for room in chat_rooms %}
+        {% if room.room_type != 'ai' %}
+        <a href="{% url 'chat_room' room.id %}"
+            class="flex items-center px-6 py-5 border-b border-white/5 transition-all duration-300 hover:bg-zinc-900 group {% if room.id|stringformat:'s' == room_id|stringformat:'s' %}bg-zinc-900 border-l-4 border-l-white{% endif %}">
+
+            <div class="relative">
+                <div
+                    class="w-12 h-12 bg-zinc-800 rounded-full flex items-center justify-center text-white font-bold group-hover:bg-white group-hover:text-black transition-all duration-300 overflow-hidden border border-white/5">
+                    {% if room.room_type == 'direct' %}
+                    {% for participant in room.participants.all %}
+                    {% if participant != user %}
+                    {% if participant.profile_picture %}
+                    <img src="{{ participant.profile_picture.url }}" alt="{{ participant.username }}"
+                        class="w-full h-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0">
+                    {% else %}
+                    {{ participant.username|first|upper }}
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                    {% else %}
+                    {{ room.name|first|upper }}
+                    {% endif %}
+                </div>
+
+                {% if room.room_type == 'direct' %}
+                {% for participant in room.participants.all %}
+                {% if participant != user and participant.is_online %}
+                <div
+                    class="absolute bottom-0 right-0 w-3 h-3 bg-white border-2 border-black rounded-full shadow-[0_0_8px_#fff]">
+                </div>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="ml-4 flex-1 min-w-0">
+                <div class="flex items-center justify-between mb-0.5">
+                    <h4 class="text-sm font-bold text-white truncate">
+                        {% if room.room_type == 'direct' %}
+                        {% for participant in room.participants.all %}
+                        {% if participant != user %}{{ participant.username }}{% endif %}
+                        {% endfor %}
+                        {% else %}
+                        {{ room.name }}
+                        {% endif %}
+                    </h4>
+                    <span class="text-[10px] text-zinc-600 uppercase tracking-tighter font-bold">
+                        {% if room.last_message %}
+                        {{ room.last_message.timestamp|timesince|cut:" ago" }}
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <p class="text-[12px] text-zinc-500 truncate font-medium group-hover:text-zinc-300">
+                        {% if room.last_message %}
+                        {% if room.last_message.sender == user %}You: {% endif %}
+                        {{ room.last_message.content|truncatechars:35 }}
+                        {% else %}
+                        Ready for transmission
+                        {% endif %}
+                    </p>
+                    {% if room.unread_count > 0 %}
+                    <span
+                        class="ml-2 inline-flex items-center justify-center w-5 h-5 bg-white text-black text-[10px] font-black rounded-full shadow-[0_0_10px_rgba(255,255,255,0.3)]">
+                        {{ room.unread_count }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+        {% endif %}
+        {% empty %}
+        <div class="p-8 text-center text-zinc-700">
+            <h3 class="mt-2 text-sm font-bold uppercase tracking-widest">No Transmissions</h3>
+            <p class="mt-1 text-xs uppercase tracking-tighter opacity-50">Frequency range clear</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .custom-sidebar-scroll::-webkit-scrollbar {
+        width: 3px;
+    }
+
+    .custom-sidebar-scroll::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .custom-sidebar-scroll::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+    }
+
+    .custom-sidebar-scroll:hover::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+    }
+</style>

@@ -1,0 +1,73 @@
+{% extends 'app1/public_base.html' %}
+{% block title %}Tools | ChatSpace{% endblock %}
+{% block content %}
+<section class="py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h1 class="text-4xl font-extrabold text-white">One Toolkit For Doing It All</h1>
+      <p class="mt-3 text-white/80">Realtime messaging, media, notifications, presence, and more — curated for ChatSpace.</p>
+      <div class="mt-6 flex items-center justify-center gap-3">
+        <a href="{% url 'login' %}" class="px-6 py-3 rounded-lg bg-white text-black">Get Started</a>
+        <a href="{% url 'public_features' %}" class="px-6 py-3 rounded-lg border border-white/10 hover:bg-white/5 transition-all">Browse Features</a>
+      </div>
+    </div>
+
+    <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="glass rounded-2xl p-6" data-animate>
+        <i data-lucide="message-square" class="w-6 h-6 text-white"></i>
+        <h3 class="mt-4 text-white font-semibold">Realtime Chat</h3>
+        <p class="mt-2 text-white/80 text-sm">WebSocket powered rooms with typing indicators and read receipts.</p>
+      </div>
+      <div class="glass rounded-2xl p-6" data-animate>
+        <i data-lucide="image" class="w-6 h-6 text-white"></i>
+        <h3 class="mt-4 text-white font-semibold">Media Uploads</h3>
+        <p class="mt-2 text-white/80 text-sm">Images and videos with previews and optimized delivery.</p>
+      </div>
+      <div class="glass rounded-2xl p-6" data-animate>
+        <i data-lucide="bell" class="w-6 h-6 text-white"></i>
+        <h3 class="mt-4 text-white font-semibold">Notifications</h3>
+        <p class="mt-2 text-white/80 text-sm">In-app notifications with read tracking and grouping.</p>
+      </div>
+      <div class="glass rounded-2xl p-6" data-animate>
+        <i data-lucide="users" class="w-6 h-6 text-white"></i>
+        <h3 class="mt-4 text-white font-semibold">Groups & Direct</h3>
+        <p class="mt-2 text-white/80 text-sm">Create group rooms or direct chats instantly.</p>
+      </div>
+      <div class="glass rounded-2xl p-6" data-animate>
+        <i data-lucide="shield" class="w-6 h-6 text-white"></i>
+        <h3 class="mt-4 text-white font-semibold">Privacy-first</h3>
+        <p class="mt-2 text-white/80 text-sm">Room access checks and per-user read states.</p>
+      </div>
+      <div class="glass rounded-2xl p-6" data-animate>
+        <i data-lucide="palette" class="w-6 h-6 text-white"></i>
+        <h3 class="mt-4 text-white font-semibold">Themes</h3>
+        <p class="mt-2 text-white/80 text-sm">Dark glass UI with blue–purple neon accents.</p>
+      </div>
+    </div>
+
+    <div class="mt-16 grid md:grid-cols-2 gap-6">
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-xl font-semibold text-white">Integrations</h3>
+        <p class="mt-2 text-white/80 text-sm">Connect to your org’s tools (coming soon): calendar, storage, and identity providers.</p>
+        <div class="mt-6 grid grid-cols-4 gap-3">
+          {% for _ in '12345678' %}<div class="h-10 rounded bg-white/5">
+            <p class="p-2 pl-2">coming Soon</p>
+
+          </div>{% endfor %}
+        </div>
+      </div>
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-xl font-semibold text-white">Security</h3>
+        <p class="mt-2 text-white/80 text-sm">Strict access checks in views/consumers ensure users only see their own chats.</p>
+        <ul class="mt-4 space-y-2 text-white/80 text-sm list-disc list-inside">
+          <li>Room participant enforcement</li>
+          <li>Unread/read state per user</li>
+          <li>Media type/size validation</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+

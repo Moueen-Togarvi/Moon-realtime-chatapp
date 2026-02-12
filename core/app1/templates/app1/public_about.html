@@ -1,0 +1,24 @@
+{% extends 'app1/public_base.html' %}
+{% block title %}About | ChatSpace{% endblock %}
+{% block content %}
+<section class="py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 items-center">
+    <div class="relative" data-animate>
+      <div class="h-80 w-full rounded-3xl bg-gradient-to-tr from-blue-500/40 to-purple-500/40 blur-2xl"></div>
+      <div class="absolute inset-6 rounded-3xl glass"></div>
+    </div>
+    <div data-animate>
+      <h2 class="text-3xl font-bold text-white">Built with passion by Moueen</h2>
+      <p class="mt-3 text-white">Powered by Django, Channels, and Tailwind CSS. Inspired by the fluid experience of modern tools like Cursor.</p>
+      <div class="mt-6 grid sm:grid-cols-2 gap-4 text-sm">
+        <div class="glass rounded-xl p-4 text-white">Django + Channels</div>
+        <div class="glass rounded-xl p-4 text-white">Tailwind UI</div>
+        <div class="glass rounded-xl p-4 text-white">WebSocket realtime</div>
+        <div class="glass rounded-xl p-4 text-white">Premium UX details</div>
+      </div>
+    </div>
+  </div>
+  </section>
+{% endblock %}
+
+

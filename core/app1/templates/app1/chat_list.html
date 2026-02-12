@@ -1,0 +1,65 @@
+{% extends 'app1/base.html' %}
+
+{% block title %}Chats - Moon'sApp{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Fix page scrolling */
+    body {
+        overflow: hidden;
+        height: 100vh;
+    }
+
+    .chat-container {
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .chats-sidebar {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-list-scrollable {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        min-height: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chat-container h-full overflow-hidden">
+    <div class="flex h-full w-full">
+        <!-- Sidebar -->
+        {% include 'app1/_chat_sidebar.html' %}
+
+        <!-- Main Chat Area -->
+        <div class="flex-1 flex items-center justify-center bg-white/5">
+            <div class="text-center">
+                <svg class="mx-auto h-24 w-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                    </path>
+                </svg>
+                <h3 class="mt-4 text-lg font-medium text-white">Welcome</h3>
+                <p class="mt-2 text-sm text-white/80">Select a chat to start messaging</p>
+                <div class="mt-6">
+                    <a href="/ai/"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-gray-900 hover:bg-white/90">
+                        <span>Open AI Assistant</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Removed inline Create Group modal in favor of dedicated page -->
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+{% endblock %}
