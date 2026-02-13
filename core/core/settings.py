@@ -67,7 +67,6 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_tailwind',
     'app1',
-    'channels_sqlite',
 ]
 
 MIDDLEWARE = [
@@ -105,9 +104,9 @@ ASGI_APPLICATION = 'core.asgi.application'
 
 # Channels configuration
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_sqlite.layers.SqliteChannelLayer',
-    },
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
 
 
@@ -118,10 +117,6 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    },
-    'channels': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'channels.sqlite3',
     }
 }
 

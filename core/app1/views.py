@@ -556,7 +556,7 @@ def ai_reply(request):
                 if not room.participants.filter(id=request.user.id).exists():
                     return JsonResponse({'reply': reply_text})
 
-                # Get or create a system AI user
+                # Getting AI User
                 ai_user, _ = User.objects.get_or_create(
                     username='AI_Assistant',
                     defaults={
@@ -566,7 +566,20 @@ def ai_reply(request):
                     }
                 )
 
-                # Add AI user as participant to the room if not already added
+                # IMPORTANT FIX: Do not add AI to existing human-to-human rooms
+                # Only add if AI is ALREADY a participant, or if room is empty (which shouldn't happen here really)
+                # Or if the room was explicitly created for AI.
+                # Here we simply check: Is AI already in the room?
+                if not room.participants.filter(id=ai_user.id).exists():
+                    # If this is a direct chat with 2 people (Human + Human), adding AI makes it 3.
+                    # We should BLOCK adding AI here.
+                    # The only case we might add AI is if the user is alone in the room?
+                    if room.participants.count() >= 2:
+                         # Human-Human chat. Do NOT intrude.
+                         # We can return the reply as JSON but NOT post it to the room.
+                         return JsonResponse({'reply': reply_text})
+
+                # Ensure AI is participant (safe now)
                 if not room.participants.filter(id=ai_user.id).exists():
                     room.participants.add(ai_user)
 
