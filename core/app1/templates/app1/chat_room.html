@@ -10,14 +10,17 @@
         height: 100vh;
     }
 
-    /* Strict Monochrome Palette */
+    /* Charcoal Palette */
     :root {
-        --sent-bubble-bg: #ffffff;
-        --sent-bubble-text: #000000;
-        --received-bubble-bg: #1a1a1a;
+        --sent-bubble-bg: #424242;
+        /* Lighter charcoal for sent */
+        --sent-bubble-text: #ffffff;
+        --received-bubble-bg: #303030;
+        /* Medium charcoal for received */
         --received-bubble-text: #ffffff;
-        --input-bg: #0a0a0a;
-        --border-color: rgba(255, 255, 255, 0.1);
+        --input-bg: #2a2a2a;
+        /* Slightly lighter than main bg */
+        --border-color: rgba(255, 255, 255, 0.08);
     }
 
     body {
@@ -25,7 +28,8 @@
         padding: 0;
         overflow: hidden !important;
         height: 100vh !important;
-        background: black;
+        background: #212121;
+        /* Main Background */
     }
 
     .chat-container {
@@ -44,7 +48,7 @@
         display: flex;
         flex-direction: column;
         gap: 16px;
-        background: #000000;
+        background: #212121;
     }
 
     .message-bubble {
@@ -55,16 +59,16 @@
         position: relative;
     }
 
-    /* Sender (You) - Solid White */
+    /* Sender (You) - Lighter Charcoal */
     .message-sender {
         align-self: flex-end;
         background: var(--sent-bubble-bg);
         color: var(--sent-bubble-text);
         border-radius: 20px 20px 2px 20px;
-        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
-    /* Receiver - Deep Gray */
+    /* Receiver - Medium Charcoal */
     .message-receiver {
         align-self: flex-start;
         background: var(--received-bubble-bg);
@@ -74,7 +78,7 @@
     }
 
     .message-input-container {
-        background: #000000;
+        background: #212121;
         border-top: 1px solid var(--border-color);
         padding: 20px 24px;
         z-index: 10;
@@ -83,15 +87,15 @@
 
     .input-pill {
         background: var(--input-bg);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 30px;
         padding: 4px 8px 4px 24px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.3s ease;
     }
 
     .input-pill:focus-within {
-        border-color: #ffffff;
-        background: #0f0f0f;
+        border-color: #616161;
+        background: #333333;
     }
 
     #message-input {
@@ -116,9 +120,9 @@
         {% include 'app1/_chat_sidebar.html' %}
 
         <!-- Main Chat Area -->
-        <div class="flex-1 flex flex-col h-full main-chat-area bg-black">
+        <div class="flex-1 flex flex-col h-full main-chat-area bg-[#212121]">
             <!-- Chat Header -->
-            <div class="flex-shrink-0 p-6 bg-black border-b border-white/10">
+            <div class="flex-shrink-0 p-6 bg-[#212121] border-b border-white/10">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-4 w-full">
                         <div class="relative">
@@ -355,7 +359,7 @@
             if (data.type === 'chat_message') {
                 console.timeEnd('message-latency');
                 console.log("Processing chat message:", data);
-                
+
                 // If this is our own message, it might already be in the UI (optimistic)
                 // We should update it or ensure no duplicates
                 const existingOptimistic = document.querySelector(`[data-temp-id="${data.message.temp_id}"]`);
@@ -379,7 +383,7 @@
             console.log("WebSocket closed. Reason:", e.reason);
             statusIndicator.className = 'w-1.5 h-1.5 bg-zinc-700 rounded-full';
             statusText.textContent = 'OFFLINE';
-            
+
             // Exponential backoff
             const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 10000);
             if (reconnectAttempts < maxReconnectAttempts) {
@@ -456,7 +460,7 @@
         const content = messageInput.value.trim();
         if (content && chatSocket.readyState === WebSocket.OPEN) {
             const tempId = Date.now().toString();
-            
+
             // Optimistic UI update
             const optimisticMessage = {
                 content: content,
@@ -466,19 +470,19 @@
                 is_optimistic: true,
                 temp_id: tempId
             };
-            
+
             const msgDiv = addMessage(optimisticMessage);
             msgDiv.setAttribute('data-temp-id', tempId);
             msgDiv.style.opacity = '0.7'; // Indicate send-in-progress
 
             console.time('message-latency');
-            chatSocket.send(JSON.stringify({ 
-                'type': 'chat_message', 
-                'content': content, 
+            chatSocket.send(JSON.stringify({
+                'type': 'chat_message',
+                'content': content,
                 'message_type': 'text',
-                'temp_id': tempId 
+                'temp_id': tempId
             }));
-            
+
             messageInput.value = '';
         }
     });
