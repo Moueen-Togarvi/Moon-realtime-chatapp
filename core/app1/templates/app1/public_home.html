@@ -11,40 +11,45 @@
     </div>
   </div>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
     <div class="text-center">
-      <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white">Fastest & Easiest Way to Generate Chats</h1>
-      <p class="mt-4 text-white/80 max-w-2xl mx-auto">Create secure, beautiful conversations for your team. Private by default, realtime delivery, modern UI.</p>
-      <div class="mt-6 flex items-center justify-center gap-3">
-        <a href="{% url 'login' %}" class="px-6 py-3 rounded-lg bg-gradient-to-r from-white to-gray-700 hover:from-white hover:to-gray-600 text-black transition-all">Get Started</a>
-        <a href="{% url 'public_features' %}" class="px-6 py-3 rounded-lg border border-white/10 hover:bg-white/5 transition-all">Explore</a>
+      <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70">
+        Fastest & Easiest Way to<br class="hidden sm:block" /> Generate Chats
+      </h1>
+      <p class="mt-6 text-lg text-white/70 max-w-2xl mx-auto font-medium">Create secure, beautiful conversations for your team. <br class="hidden sm:block" />Private by default, realtime delivery, modern UI.</p>
+      <div class="mt-10 flex items-center justify-center gap-4">
+        <a href="{% url 'login' %}" class="px-8 py-3.5 rounded-full bg-white text-gray-900 font-semibold shadow-[0_0_20px_rgba(255,255,255,0.25)] hover:scale-105 hover:bg-gray-100 transition-all duration-300">Get Started</a>
+        <a href="{% url 'public_features' %}" class="px-8 py-3.5 rounded-full border border-white/20 text-white font-semibold hover:bg-white/10 hover:border-white/40 transition-all duration-300">Explore</a>
       </div>
     </div>
 
     <!-- Showcase row (two glassy, neon cards centered and spaced) -->
-    <div class="flex flex-col items-center justify-center min-h-[540px] py-12 ">
-      <div class="flex flex-col md:flex-row gap-6 justify-center items-center md:items-stretch w-full">
-        <div class="glass neon-card hero-card rounded-2xl shadow-[0_0_32px_8px_rgba(255,255,255,0.10),_0_2px_18px_2px_rgba(107,177,255,0.10)] mb-3 md:mb-0 w-full md:w-[28rem] self-stretch transition-all duration-700 hover:shadow-[0_0_44px_0_rgba(21,127,255,0.21)] border border-white/20 animate-fade-in">
-          <div class="p-8 h-full flex flex-col">
-            <div class="font-semibold text-white text-xl mb-2">New Room</div>
-            <div class="space-y-5 flex-1 flex flex-col">
-          <div>
-                <label class="block text-xs text-white/70 mb-1">Room name</label>
-                <div class="relative">
-                  <input id="demo-room-name" class="w-full px-3 py-2 rounded-md bg-white/10 border border-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-blue-500/30 transition-all pr-10" placeholder="Design Sync" autocomplete="off" />
-                  <span id="demo-caret" class="absolute right-3 top-1/2 -translate-y-1/2 select-none text-blue-300 text-xl opacity-80">|</span>
+    <div class="flex flex-col items-center justify-center min-h-[540px] py-16">
+      <div class="flex flex-col md:flex-row gap-8 justify-center items-center md:items-stretch w-full max-w-5xl mx-auto">
+        <div class="glass hero-card rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] mb-3 md:mb-0 w-full md:w-[28rem] self-stretch transition-all duration-500 hover:shadow-[0_0_40px_rgba(59,130,246,0.3)] border border-white/10 animate-fade-in relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
+          <div class="p-8 h-full flex flex-col relative z-10">
+            <div class="font-semibold text-white text-xl mb-4 flex items-center gap-2">
+               <svg class="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+               New Room
             </div>
-          </div>
-          <div>
-                <label class="block text-xs text-white/70 mb-1">Visibility</label>
-                <div class="flex gap-3 mt-1">
-                  <button id="demo-private-btn" class="px-4 py-2 rounded-md bg-white/10 text-white/90 border border-white/20 hover:bg-blue-50/10 focus:bg-blue-100/10">Private</button>
-                  <button id="demo-team-btn" class="px-4 py-2 rounded-md bg-white/10 text-white/90 border border-white/20 font-semibold hover:bg-blue-50/10 focus:bg-blue-100/10">Team</button>
+            <div class="space-y-5 flex-1 flex flex-col">
+              <div>
+                <label class="block text-xs font-medium text-white/60 mb-2 uppercase tracking-wide">Room name</label>
+                <div class="relative">
+                  <input id="demo-room-name" class="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-sm" placeholder="Design Sync" autocomplete="off" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-white/60 mb-2 uppercase tracking-wide">Visibility</label>
+                <div class="flex gap-2.5 mt-1">
+                  <button id="demo-private-btn" class="flex-1 py-2.5 rounded-xl bg-black/40 text-white/90 border border-transparent hover:border-white/20 transition-all font-medium text-sm">Private</button>
+                  <button id="demo-team-btn" class="flex-1 py-2.5 rounded-xl bg-blue-600 text-white font-medium shadow-[0_0_15px_rgba(37,99,235,0.4)] text-sm">Team</button>
                   <span id="demo-vis-ripple" style="display:none;position:absolute;width:36px;height:36px;border-radius:50%;background:#0ff9;pointer-events:none;z-index:40;"></span>
                 </div>
               </div>
-              <div class="mt-auto">
-                <button id="demo-create-btn" class="block w-full px-5 py-2 rounded-lg font-bold bg-white text-gray-800 shadow hover:shadow-lg hover:scale-[1.02] transition relative overflow-hidden">Create Room
+              <div class="mt-auto pt-2">
+                <button id="demo-create-btn" class="block w-full px-5 py-3 rounded-xl font-semibold bg-white text-gray-900 shadow hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] hover:scale-[1.02] transition-all relative overflow-hidden">Create Room
                   <span id="demo-create-checkmark" class="hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl text-green-500 z-10">&#10003;</span>
                 </button>
                 <canvas id="demo-confetti" style="display:none;position:absolute;left:0;top:0;pointer-events:none;z-index:99;"></canvas>
@@ -52,66 +57,67 @@
             </div>
           </div>
         </div>
-        <div class="glass neon-card hero-card rounded-2xl shadow-[0_0_32px_8px_rgba(255,255,255,0.10),_0_2px_18px_2px_rgba(107,177,255,0.10)] w-full md:w-[28rem] self-stretch mx-auto transition-all duration-700 hover:shadow-[0_0_44px_0_rgba(21,127,255,0.21)] border border-white/20 animate-fade-in flex flex-col">
-          <div class="p-6 md:p-8 h-full flex flex-col">
-            <div class="flex items-start gap-3 mb-3">
-              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-tr from-white via-gray-200 to-gray-100 text-gray-700 shadow-lg shrink-0 mt-0.5">
-                <svg width="19" height="19" fill="none"><circle cx="9.5" cy="9.5" r="9" fill="#fff"/><path d="M5 10.5h9M7.5 7.5L10 10.5l-2.5 3" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div class="glass hero-card rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] w-full md:w-[28rem] self-stretch mx-auto transition-all duration-500 hover:shadow-[0_0_40px_rgba(59,130,246,0.3)] border border-white/10 animate-fade-in flex flex-col relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
+          <div class="p-6 md:p-8 h-full flex flex-col relative z-10">
+            <div class="flex items-start gap-4 mb-5">
+              <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-500 to-indigo-500 text-white shadow-lg shrink-0 mt-0.5">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
               </span>
               <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-center gap-2 mb-1">
-                  <span class="text-xl font-bold text-white">Live Workspace</span>
-                  <span class="text-xs font-semibold rounded bg-white/60 text-gray-800 px-2 py-0.5 whitespace-nowrap" id="card2-chip">Screenshare</span>
+                  <span class="text-xl font-bold text-white tracking-tight">Live Workspace</span>
+                  <span class="text-xs font-semibold rounded-md bg-white/10 text-blue-300 border border-blue-500/30 px-2 py-0.5 whitespace-nowrap" id="card2-chip">Screenshare</span>
                 </div>
-                <div class="text-xs text-white/70">Minimal, fast and cohesive — white & gray UI kit</div>
-        </div>
-      </div>
+                <div class="text-xs text-white/50 font-medium">Minimal, fast and cohesive UI kit</div>
+              </div>
+            </div>
 
             <!-- mini tabs (chips) -->
-            <div class="flex items-center gap-2 mb-3">
-              <button class="card2-tab active px-3 py-1.5 rounded-full bg-white/70 text-gray-800 text-xs font-semibold">Overview</button>
-              <button class="card2-tab px-3 py-1.5 rounded-full bg-white/20 text-white/90 text-xs">Docs</button>
-              <button class="card2-tab px-3 py-1.5 rounded-full bg-white/20 text-white/90 text-xs">Tasks</button>
+            <div class="flex items-center gap-2 mb-4 bg-black/20 p-1 rounded-full w-fit border border-white/5">
+              <button class="card2-tab active px-4 py-1.5 rounded-full bg-white text-gray-900 text-xs font-semibold shadow-sm transition-all duration-300">Overview</button>
+              <button class="card2-tab px-4 py-1.5 rounded-full text-white/70 hover:text-white text-xs font-medium transition-all duration-300">Docs</button>
+              <button class="card2-tab px-4 py-1.5 rounded-full text-white/70 hover:text-white text-xs font-medium transition-all duration-300">Tasks</button>
             </div>
 
             <!-- Panels -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1 mb-2 auto-rows-fr flex-1">
-              <div class="relative rounded-xl overflow-hidden bg-white/10 h-full min-h-[180px] flex">
-                <div class="absolute inset-0 bg-gradient-to-br from-white/10 via-white/5 to-white/0"></div>
-                <div class="relative z-10 w-full h-full flex flex-col justify-center px-4">
-                  <div class="h-3.5 w-24 rounded bg-white/40 mb-3 animate-card2-shimmer"></div>
-                  <div class="rounded-2xl bg-white/85 text-gray-900 font-semibold flex items-center px-3 py-2 shadow">Design system update shipped</div>
-                  <div class="mt-2 rounded-2xl bg-white/70 text-gray-800 px-3 py-1.5 inline-flex items-center gap-2">
-                    <span class="text-xs">Replying</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 mb-4 auto-rows-fr flex-1">
+              <div class="relative rounded-2xl overflow-hidden bg-black/30 border border-white/5 h-full min-h-[180px] flex">
+                <div class="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent"></div>
+                <div class="relative z-10 w-full h-full flex flex-col justify-center px-5">
+                  <div class="h-3 w-20 rounded-full bg-white/20 mb-4 animate-card2-shimmer"></div>
+                  <div class="rounded-xl bg-white/95 text-gray-900 font-semibold text-sm flex items-center px-3 py-2.5 shadow-md">Design system update shipped</div>
+                  <div class="mt-3 rounded-xl bg-white/10 border border-white/10 text-white px-3 py-2 inline-flex items-center gap-2 w-fit">
+                    <span class="text-xs text-white/80">Replying</span>
                     <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
                   </div>
                 </div>
               </div>
 
-              <div class="relative rounded-xl overflow-hidden bg-white/10 h-full min-h-[180px] p-4 grid grid-rows-3 gap-3">
-                <div class="grid grid-cols-3 gap-3 text-center">
-                  <div class="glass rounded-lg py-2">
-                    <div class="text-[10px] text-white/70">Throughput</div>
-                    <div id="kpi1" class="text-white font-bold">92%</div>
+              <div class="relative rounded-2xl overflow-hidden bg-black/30 border border-white/5 h-full min-h-[180px] p-4 flex flex-col justify-between">
+                <div class="grid grid-cols-3 gap-1.5 text-center w-full">
+                  <div class="bg-white/5 rounded-xl py-2 px-1 flex flex-col justify-center border border-white/5 flex-1 min-w-0">
+                    <div class="text-[9px] text-white/50 uppercase font-semibold mb-1 tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">Speed</div>
+                    <div id="kpi1" class="text-blue-400 font-bold text-sm">92%</div>
                   </div>
-                  <div class="glass rounded-lg py-2">
-                    <div class="text-[10px] text-white/70">Stability</div>
-                    <div id="kpi2" class="text-white font-bold">99%</div>
+                  <div class="bg-white/5 rounded-xl py-2 px-1 flex flex-col justify-center border border-white/5 flex-1 min-w-0">
+                    <div class="text-[9px] text-white/50 uppercase font-semibold mb-1 tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">Uptime</div>
+                    <div id="kpi2" class="text-blue-400 font-bold text-sm">99%</div>
                   </div>
-                  <div class="glass rounded-lg py-2">
-                    <div class="text-[10px] text-white/70">Latency</div>
-                    <div id="kpi3" class="text-white font-bold">120ms</div>
+                  <div class="bg-white/5 rounded-xl py-2 px-1 flex flex-col justify-center border border-white/5 flex-1 min-w-0">
+                    <div class="text-[9px] text-white/50 uppercase font-semibold mb-1 tracking-wider overflow-hidden text-ellipsis whitespace-nowrap">Ping</div>
+                    <div id="kpi3" class="text-blue-400 font-bold text-sm">120ms</div>
                   </div>
                 </div>
-                <div class="flex items-center justify-between text-xs text-white/80">
-                  <span>Build</span><span id="kpi-build">v1.4.2</span>
+                <div class="flex items-center justify-between text-[11px] font-medium text-white/70 px-1 pt-3">
+                  <span>Build Status</span><span id="kpi-build" class="text-white">v1.4.2</span>
                 </div>
-                <div class="h-2 rounded bg-white/20 overflow-hidden"><div id="card2-progress" class="h-full bg-white/70 rounded" style="width:60%"></div></div>
+                <div class="h-1.5 rounded-full bg-white/10 overflow-hidden relative mt-2 mb-1"><div id="card2-progress" class="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full" style="width:60%"></div></div>
               </div>
             </div>
 
             <div class="flex items-center justify-center mt-auto">
-              <div class="w-full h-3 bg-gradient-to-r from-white/50 via-white/20 to-gray-200/60 rounded-full shadow-inner"></div>
+              <div class="w-full h-1.5 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-full opacity-50"></div>
             </div>
           </div>
         </div>
@@ -425,7 +431,6 @@ document.getElementById('landing-contact-form').addEventListener('submit', funct
 const ROOM_NAMES = Object.freeze(['Design Sync','Work Room','Team Call','Daily Meeting','VIP Support']);
 let nameIdx = 0; // always start from the first name
 const roomName = document.getElementById('demo-room-name');
-const caret = document.getElementById('demo-caret');
 const privBtn = document.getElementById('demo-private-btn');
 const teamBtn = document.getElementById('demo-team-btn');
 const createBtn = document.getElementById('demo-create-btn');
@@ -438,9 +443,9 @@ function moveCursorTo(el, duration=1200, offset=[0,0]){
   fakeCursor.style.top=(r.top+sy+r.height/2-12+offset[1])+'px';
 }
 async function typeNameSlow(name){
-  roomName.focus(); roomName.classList.add('demo-input-glow'); caret.style.opacity=1; roomName.value='';
+  roomName.focus(); roomName.classList.add('demo-input-glow'); roomName.value='';
   for(let i=0;i<name.length;i++){ roomName.value+=name[i]; await new Promise(r=>setTimeout(r,220)); }
-  caret.style.opacity=0; roomName.classList.remove('demo-input-glow');
+  roomName.classList.remove('demo-input-glow');
   await new Promise(r=>setTimeout(r,900));
 }
 async function selectVisibility(){
@@ -490,6 +495,7 @@ function buttonPetalShower(target){
 
 // Extra guard: reset index if it somehow drifts
 window.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible'){ nameIdx = nameIdx % ROOM_NAMES.length; }});
+})();
 
 /*** CARD 2 ANIMATION: Chat Image Preview ***/
 (function cardTwoDemo(){

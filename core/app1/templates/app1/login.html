@@ -3,67 +3,74 @@
 {% block title %}Login - Moon'sApp{% endblock %}
 
 {% block content %}
-<div class="min-h-[calc(100vh-80px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="w-full max-w-5xl grid md:grid-cols-2 gap-10 items-center">
-        <div class="hidden md:block">
-            <div class="glass rounded-2xl p-10 h-full flex flex-col items-center justify-center text-center">
-                <div class="mb-6">
-                    <span class="relative inline-flex h-20 w-20 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600"></span>
-                </div>
-                <h3 class="text-2xl font-bold text-white">Welcome to Moon'sApp</h3>
-                <p class="mt-3 text-white/80">Secure, realtime messaging with a modern, elegant interface.</p>
-            </div>
-        </div>
-        <div class="max-w-md w-full space-y-6 glass rounded-2xl p-8 shadow-[0_0_40px_rgba(59,130,246,0.15)] mx-auto">
-        <div>
-            <div class="flex justify-center mb-2"><span class="relative inline-flex h-10 w-10 rounded-full bg-gradient-to-tr from-white to-gray-700"></span></div>
-            <h2 class="mt-2 text-center text-3xl font-extrabold text-white">
-                Sign in to your account
-            </h2>
-            <p class="mt-2 text-center text-sm text-white/80">
-                Or
-                <a href="{% url 'register' %}" class="font-medium text-blue-400 hover:text-blue-300">
-                    create a new account
-                </a>
-            </p>
-        </div>
-        
-        <form class="mt-4 space-y-6" method="post">
-            {% csrf_token %}
-            <div class="rounded-md shadow-sm -space-y-px">
-                <div>
-                    <label for="{{ form.username.id_for_label }}" class="sr-only">Username</label>
-                    <input id="{{ form.username.id_for_label }}" 
-                           name="{{ form.username.name }}" 
-                           type="text" 
-                           required 
-                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-white/10 placeholder-white/60 text-white bg-white/5 rounded-t-md focus:outline-none focus:ring-2 focus:ring-gray-400/50 focus:border-gray-400/50 focus:z-10 sm:text-sm" 
-                           placeholder="Username"
-                           value="{{ form.username.value|default:'' }}">
-                    {% if form.username.errors %}
-                        <div class="text-red-400 text-sm mt-1">{{ form.username.errors.0 }}</div>
-                    {% endif %}
-                </div>
-                <div>
-                    <label for="{{ form.password.id_for_label }}" class="sr-only">Password</label>
-                    <input id="{{ form.password.id_for_label }}" 
-                           name="{{ form.password.name }}" 
-                           type="password" 
-                           required 
-                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-white/10 placeholder-grey-900 text-white bg-white/5 rounded-b-md focus:outline-none focus:ring-2 focus:ring-gray-400/50 focus:border-gray-400/50 focus:z-10 sm:text-sm" 
-                           placeholder="Password">
-                    {% if form.password.errors %}
-                        <div class="text-red-400 text-sm mt-1">{{ form.password.errors.0 }}</div>
-                    {% endif %}
-                </div>
-            </div>
+<div class="min-h-[calc(100vh-80px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#0c0c0c] relative overflow-hidden">
+    <!-- Background Decorators -->
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none"></div>
 
-            <div>
-                <button type="submit" 
-                        class="group relative w-full flex justify-center py-3 px-4 border border-white/20 text-sm font-medium rounded-md text-black bg-white hover:from-white hover:to-gray-600 transition-all">
-                    Sign in
-                </button>
+    <div class="w-full max-w-5xl grid md:grid-cols-2 gap-10 items-center relative z-10">
+        <div class="hidden md:block">
+            <div class="bg-white/[0.02] backdrop-blur-3xl border border-white/5 rounded-[2.5rem] p-12 h-full flex flex-col items-center justify-center text-center shadow-2xl relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-indigo-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                <div class="mb-8 relative">
+                    <div class="absolute inset-0 bg-blue-500 blur-2xl opacity-40 animate-pulse"></div>
+                    <span class="relative flex items-center justify-center h-24 w-24 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 shadow-[0_0_40px_rgba(79,70,229,0.5)] border border-white/20">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </span>
+                </div>
+                <h3 class="text-3xl font-black text-white tracking-wide uppercase">Neural Access</h3>
+                <p class="mt-4 text-[0.95rem] text-zinc-400 font-medium leading-relaxed max-w-xs">Secure, realtime transmission gateway. Establish your secure link to the server.</p>
             </div>
+        </div>
+
+        <div class="max-w-md w-full space-y-8 bg-[#18181b]/80 backdrop-blur-2xl rounded-[2.5rem] p-10 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] mx-auto relative">
+            <div>
+                <h2 class="text-center text-2xl font-black text-white uppercase tracking-widest">
+                    Authenticate
+                </h2>
+                <p class="mt-3 text-center text-sm font-medium text-zinc-500">
+                    AWAITING CLEARANCE OR
+                    <a href="{% url 'register' %}" class="ml-1 font-bold text-blue-400 hover:text-blue-300 tracking-wider transition-colors">
+                        INITIALIZE NEW
+                    </a>
+                </p>
+            </div>
+            
+            <form class="mt-8 space-y-6" method="post">
+                {% csrf_token %}
+                <div class="space-y-5">
+                    <div>
+                        <label for="{{ form.username.id_for_label }}" class="block text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2 ml-1">Terminal ID (Username)</label>
+                        <input id="{{ form.username.id_for_label }}" name="{{ form.username.name }}" type="text" required 
+                               class="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-sm font-medium text-white placeholder-zinc-600 focus:outline-none focus:border-white/20 focus:bg-black/60 transition-all shadow-inner" 
+                               placeholder="Enter your username"
+                               value="{{ form.username.value|default:'' }}">
+                        {% if form.username.errors %}
+                            <div class="text-red-400 text-xs mt-2 ml-1 font-medium">{{ form.username.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label for="{{ form.password.id_for_label }}" class="block text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2 ml-1">Access Key (Password)</label>
+                        <input id="{{ form.password.id_for_label }}" name="{{ form.password.name }}" type="password" required 
+                               class="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-sm font-medium text-white placeholder-zinc-600 focus:outline-none focus:border-white/20 focus:bg-black/60 transition-all shadow-inner" 
+                               placeholder="••••••••">
+                        {% if form.password.errors %}
+                            <div class="text-red-400 text-xs mt-2 ml-1 font-medium">{{ form.password.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" 
+                            class="group relative w-full flex justify-center py-4 px-4 border border-white/10 text-sm font-black tracking-widest uppercase rounded-2xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] transition-all overflow-hidden">
+                        <span class="absolute inset-0 w-full h-full bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+                        Initiate Sequence
+                    </button>
+                </div>
+            </form>
+        </div>
         </form>
         </div>
     </div>
