@@ -43,41 +43,20 @@
                 <div class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label for="{{ form.first_name.id_for_label }}" class="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 ml-1">First Name</label>
-                            <input id="{{ form.first_name.id_for_label }}" name="{{ form.first_name.name }}" type="text" required
-                                class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-white placeholder-zinc-600 focus:outline-none focus:border-white/20 focus:bg-black/60 transition-all shadow-inner"
-                                placeholder="..." value="{{ form.first_name.value|default:'' }}">
-                            {% if form.first_name.errors %}
-                            <div class="text-red-400 text-xs mt-1 ml-1">{{ form.first_name.errors.0 }}</div>
-                            {% endif %}
-                        </div>
-                        <div>
-                            <label for="{{ form.last_name.id_for_label }}" class="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 ml-1">Last Name</label>
-                            <input id="{{ form.last_name.id_for_label }}" name="{{ form.last_name.name }}" type="text" required
-                                class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-white placeholder-zinc-600 focus:outline-none focus:border-white/20 focus:bg-black/60 transition-all shadow-inner"
-                                placeholder="..." value="{{ form.last_name.value|default:'' }}">
-                            {% if form.last_name.errors %}
-                            <div class="text-red-400 text-xs mt-1 ml-1">{{ form.last_name.errors.0 }}</div>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
                             <label for="{{ form.username.id_for_label }}" class="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 ml-1">Terminal ID (Username)</label>
                             <input id="{{ form.username.id_for_label }}" name="{{ form.username.name }}" type="text" required
                                 class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-white placeholder-zinc-600 focus:outline-none focus:border-white/20 focus:bg-black/60 transition-all shadow-inner"
-                                placeholder="..." value="{{ form.username.value|default:'' }}">
+                                placeholder="Enter Username" value="{{ form.username.value|default:'' }}">
                             {% if form.username.errors %}
                             <div class="text-red-400 text-xs mt-1 ml-1">{{ form.username.errors.0 }}</div>
                             {% endif %}
                         </div>
 
                         <div>
-                            <label for="{{ form.email.id_for_label }}" class="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 ml-1">Email Node</label>
+                            <label for="{{ form.email.id_for_label }}" class="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 ml-1">Email Base</label>
                             <input id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" type="email" required
                                 class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-white placeholder-zinc-600 focus:outline-none focus:border-white/20 focus:bg-black/60 transition-all shadow-inner"
-                                placeholder="..." value="{{ form.email.value|default:'' }}">
+                                placeholder="Enter Email" value="{{ form.email.value|default:'' }}">
                             {% if form.email.errors %}
                             <div class="text-red-400 text-xs mt-1 ml-1">{{ form.email.errors.0 }}</div>
                             {% endif %}
@@ -85,37 +64,6 @@
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="{{ form.phone_number.id_for_label }}" class="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 ml-1">Comm Channel (Phone)</label>
-                            <input id="{{ form.phone_number.id_for_label }}" name="{{ form.phone_number.name }}" type="tel"
-                                class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-white placeholder-zinc-600 focus:outline-none focus:border-white/20 focus:bg-black/60 transition-all shadow-inner"
-                                placeholder="..." value="{{ form.phone_number.value|default:'' }}">
-                            {% if form.phone_number.errors %}
-                            <div class="text-red-400 text-xs mt-1 ml-1">{{ form.phone_number.errors.0 }}</div>
-                            {% endif %}
-                        </div>
-
-                        <div>
-                            <label for="{{ form.profile_picture.id_for_label }}" class="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 ml-1">Avatar Uplink</label>
-                            <input id="{{ form.profile_picture.id_for_label }}" name="{{ form.profile_picture.name }}" type="file" accept="image/*"
-                                class="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-none file:text-[10px] file:font-bold file:uppercase file:bg-white/10 file:text-white hover:file:bg-white/20 transition-all cursor-pointer">
-                            {% if form.profile_picture.errors %}
-                            <div class="text-red-400 text-xs mt-1 ml-1">{{ form.profile_picture.errors.0 }}</div>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div>
-                        <label for="{{ form.bio.id_for_label }}" class="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 ml-1">Data Log (Bio)</label>
-                        <textarea id="{{ form.bio.id_for_label }}" name="{{ form.bio.name }}" rows="2"
-                            class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-white placeholder-zinc-600 focus:outline-none focus:border-white/20 focus:bg-black/60 transition-all shadow-inner resize-none"
-                            placeholder="Data..."></textarea>
-                        {% if form.bio.errors %}
-                        <div class="text-red-400 text-xs mt-1 ml-1">{{ form.bio.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4 pt-2">
                         <div>
                             <label for="{{ form.password1.id_for_label }}" class="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1.5 ml-1">Encryption Key</label>
                             <input id="{{ form.password1.id_for_label }}" name="{{ form.password1.name }}" type="password" required
